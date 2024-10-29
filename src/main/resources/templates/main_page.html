@@ -31,7 +31,7 @@
 
         <ul>
             <li><a href="#" onclick="showSection('addWord')">단어 추가</a></li>
-            <li><a href="#" onclick="showSection('wordList')">단어 리스트</a></li>
+            <li><a href="#" onclick="showSection('wordList'); loadWordList();">단어 리스트</a></li>
             <li><a href="#" onclick="showSection('wordQuiz')">단어 퀴즈</a></li>
         </ul>
     </div>
@@ -39,19 +39,17 @@
     <!-- 단어 추가 화면 -->
     <div id="addWord" class="content-section" style="display: none;">
         <h2>단어 추가</h2>
-        <form>
-            <input type="text" placeholder="단어 입력" required>
-            <button type="submit">추가</button>
+        <form id="addWordForm">
+            <input type="text" id="newWord" class="insert-word" placeholder="단어 입력" required>
+            <input type="text" id="newMean" class="insert-word" placeholder="뜻 입력" required>
+            <button type="submit" class="insert-word">추가</button>
         </form>
     </div>
 
     <!-- 단어 리스트 화면 -->
     <div id="wordList" class="content-section" style="display: none;">
         <h2>단어 리스트</h2>
-        <ul>
-            <li>예시 단어 1</li>
-            <li>예시 단어 2</li>
-        </ul>
+        <ul id="wordListContainer"></ul>
     </div>
 
     <!-- 단어 퀴즈 화면 -->
@@ -65,30 +63,107 @@
 <script>
     // 화면 전환 함수
     function showSection(sectionId) {
-        // 모든 섹션을 숨기기
-        $('.content-section').hide();
-
-        // 선택한 섹션만 표시
-        $('#' + sectionId).show();
+        $('.content-section').hide(); // 모든 섹션 숨기기
+        $('#' + sectionId).show(); // 선택한 섹션만 표시
     }
+
+    // 단어 리스트 로드 함수
+    function loadWordList() {
+        $.ajax({
+            type: 'GET',
+            url: '/word/list',
+            success: function (response) {
+                const $container = $('#wordListContainer');
+                $container.empty(); // 기존 리스트 초기화
+
+                if (response.length === 0) {
+                    $container.append('<li>등록된 단어가 없습니다.</li>');
+                    return;
+                }
+
+                response.forEach(function (word) {
+                    // 단어와 의미를 포함한 리스트 항목 생성
+                    const $li = $('<li></li>');
+
+                    const $wordText = $('<span></span>').text(word.word).css({
+                        'font-weight': 'bold',
+                        'margin-right': '10px'
+                    });
+
+                    const $meanText = $('<span></span>').text(`(${word.mean})`);
+
+                    // 삭제 버튼 생성 및 이벤트 연결
+                    const $actions = $('<div class="word-actions"></div>');
+                    const $deleteButton = $('<button>삭제</button>').on('click', function () {
+                        deleteWord(word.id);
+                    });
+
+                    $actions.append($deleteButton);
+                    $li.append($wordText).append($meanText).append($actions);
+                    $container.append($li);
+                });
+
+            },
+            error: function (error) {
+                alert('단어 리스트 불러오기 실패: ' + JSON.stringify(error));
+            }
+        });
+    }
+
+    // 단어 삭제 함수
+    function deleteWord(wordId) {
+        $.ajax({
+            type: 'DELETE',
+            url: '/word/delete/' + wordId,
+            success: function () {
+                alert('단어가 삭제되었습니다.');
+                loadWordList(); // 삭제 후 리스트 갱신
+            },
+            error: function (error) {
+                alert('단어 삭제 실패: ' + JSON.stringify(error));
+            }
+        });
+    }
+
+    // 단어 추가 함수
+    $('#addWordForm').on('submit', function (event) {
+        event.preventDefault(); // 폼 기본 동작 중단
+
+        const newWord = $('#newWord').val();
+        const newMean = $('#newMean').val();
+        $.ajax({
+            type: 'POST',
+            url: '/word/add',
+            contentType: 'application/json',
+            data: JSON.stringify({ word: newWord, mean: newMean }),
+            success: function () {
+                alert('단어가 추가되었습니다.');
+                $('#newWord').val(''); // 입력 필드 초기화
+                $('#newMean').val(''); // 입력 필드 초기화
+            },
+            error: function (error) {
+                alert('단어 추가 실패: ' + JSON.stringify(error));
+            }
+        });
+    });
 
     // 로그아웃 처리 함수
     function logout() {
         $.ajax({
             type: 'POST',
             url: '/user/logout',
-            success: function() {
+            success: function () {
                 alert('로그아웃 되었습니다.');
                 window.location.href = '/';
             },
-            error: function(error) {
+            error: function (error) {
                 alert('로그아웃 실패: ' + JSON.stringify(error));
             }
         });
     }
 
-    // 페이지가 로드될 때 기본 섹션 표시 (예: 단어 추가 화면)
-    $(document).ready(function() {
+    // 페이지 로드 시 기본 화면 설정
+    $(document).ready(function () {
         showSection('addWord');
     });
 </script>
