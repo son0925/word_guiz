@@ -13,4 +13,8 @@ public interface WordRepository extends JpaRepository<WordEntity, Long> {
 
     void deleteByWord(String word);
 
+    Optional<WordEntity> findByWordAndUserId(String word, String userId);
+
+    List<WordEntity> findAllByUserId(String cookie);
+
 }

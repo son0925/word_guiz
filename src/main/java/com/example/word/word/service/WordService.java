@@ -1,5 +1,8 @@
 package com.example.word.word.service;
 
+import com.example.word.statistics.db.StatisticsEntity;
+import com.example.word.statistics.db.StatisticsRepository;
+import com.example.word.statistics.service.StatisticsService;
 import com.example.word.user.db.UserEntity;
 import com.example.word.user.db.UserRepository;
 import com.example.word.word.db.WordEntity;
@@ -21,7 +24,9 @@ public class WordService {
     private final WordRepository wordRepository;
     private final UserRepository userRepository;
     private final WordConverter wordConverter;
+    private final StatisticsService statisticsService;
 
+    @Transactional
     public WordDto insert(WordInsertRequest wordInsertRequest, String cookie) {
         var user = getUserByCookie(cookie);
 
@@ -29,7 +34,7 @@ public class WordService {
         var word = wordInsertRequest.getWord().trim().toLowerCase();
         var mean = wordInsertRequest.getMean();
 
-        var foundWord = wordRepository.findByWord(word);
+        var foundWord = wordRepository.findByWordAndUserId(word, userId);
 
         if (foundWord.isPresent()) {
             throw new RuntimeException("이미 해당 단어는 존재합니다.");
@@ -41,7 +46,11 @@ public class WordService {
                 .mean(mean)
                 .build();
 
+
+
         wordRepository.save(wordEntity);
+
+        statisticsService.insertWord(wordEntity);
 
         return wordConverter.toDto(wordEntity);
 
