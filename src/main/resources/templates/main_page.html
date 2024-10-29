@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나만의 단어</title>
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="layout">
+
+    <div th:if="${user == null}" class="login_bar">
+        <ul>
+            <li><a href="/login">로그인</a></li>
+            <li><a href="/register">회원가입</a></li>
+        </ul>
+    </div>
+
+    <div th:unless="${user == null}" class="user_info">
+        <ul>
+            <li th:text="|${user}님 반갑습니다|"></li>
+            <li class="logout"><a href="#" onclick="logout()">로그아웃</a></li>
+        </ul>
+    </div>
+
+    <div class="logo_menu_bar">
+        <div class="logo">
+            <img src="/images/bear.png" alt="logo">
+        </div>
+
+        <ul>
+            <li><a href="#" onclick="showSection('addWord')">단어 추가</a></li>
+            <li><a href="#" onclick="showSection('wordList')">단어 리스트</a></li>
+            <li><a href="#" onclick="showSection('wordQuiz')">단어 퀴즈</a></li>
+        </ul>
+    </div>
+
+    <!-- 단어 추가 화면 -->
+    <div id="addWord" class="content-section" style="display: none;">
+        <h2>단어 추가</h2>
+        <form>
+            <input type="text" placeholder="단어 입력" required>
+            <button type="submit">추가</button>
+        </form>
+    </div>
+
+    <!-- 단어 리스트 화면 -->
+    <div id="wordList" class="content-section" style="display: none;">
+        <h2>단어 리스트</h2>
+        <ul>
+            <li>예시 단어 1</li>
+            <li>예시 단어 2</li>
+        </ul>
+    </div>
+
+    <!-- 단어 퀴즈 화면 -->
+    <div id="wordQuiz" class="content-section" style="display: none;">
+        <h2>단어 퀴즈</h2>
+        <p>퀴즈가 여기 표시됩니다.</p>
+    </div>
+
+</div>
+
+<script>
+    // 화면 전환 함수
+    function showSection(sectionId) {
+        // 모든 섹션을 숨기기
+        $('.content-section').hide();
+
+        // 선택한 섹션만 표시
+        $('#' + sectionId).show();
+    }
+
+    // 로그아웃 처리 함수
+    function logout() {
+        $.ajax({
+            type: 'POST',
+            url: '/user/logout',
+            success: function() {
+                alert('로그아웃 되었습니다.');
+                window.location.href = '/';
+            },
+            error: function(error) {
+                alert('로그아웃 실패: ' + JSON.stringify(error));
+            }
+        });
+    }
+
+    // 페이지가 로드될 때 기본 섹션 표시 (예: 단어 추가 화면)
+    $(document).ready(function() {
+        showSection('addWord');
+    });
+</script>
+
+</body>
+</html>

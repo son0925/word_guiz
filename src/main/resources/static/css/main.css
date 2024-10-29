@@ -1,0 +1,94 @@
+/* config */
+* {
+  font-size: 16px;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+  color: skyBlue;
+}
+
+.layout {
+    width: 1200px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.login_bar {
+    width: 100%;
+    height: 30px;
+    position: relative;
+    background-color: gray;
+}
+
+.login_bar ul {
+    display: flex;
+    justify-content: space-evenly;
+    width: 200px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+}
+
+.login_bar ul li {
+    margin: auto 0;
+}
+
+.login_bar ul li a {
+    font-size: 15px;
+}
+
+.logo_menu_bar {
+  display: flex;
+  position: relative;
+}
+
+.logo_menu_bar .logo {
+
+}
+
+.logo_menu_bar .logo img {
+
+}
+
+.logo_menu_bar ul {
+  width: 700px;
+  height: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  position: absolute;
+  right: 0;
+}
+
+.logo_menu_bar ul li {
+  margin: auto 0;
+}
+
+.logo_menu_bar ul li a {
+  font-size: 27px;
+  font-weight: 600;
+}
+
+.user_info {
+    width: 100%;
+    height: 30px;
+    position: relative;
+    background-color: gray;
+    display: flex;
+}
+
+.user_info ul {
+  display: flex;
+  justify-content: space-evenly;
+  width: 300px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+}
+
+.user_info ul li {
+  margin: 10px auto;
+}
