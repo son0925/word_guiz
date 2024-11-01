@@ -15,7 +15,6 @@ import lombok.*;
 @Builder
 @ToString
 @Entity(name = "word")
-@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class WordEntity {
 
     @Id

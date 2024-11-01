@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class WordDto {
 
     private Long wordId;

@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 @Entity(name = "statistics")
-@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class StatisticsEntity {
 
     @Id
