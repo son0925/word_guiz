@@ -19,26 +19,29 @@ public class UserApiController  {
     @PostMapping("/register")
     public Api<UserDto> register(
             @RequestBody
-            UserDto userDto
+            Api<UserDto> userDto
     ) {
-        return userService.register(userDto);
+        var dto = userService.register(userDto.getBody());
+        return Api.OK(dto);
     }
 
 
     @PostMapping("/login")
     public Api<UserDto> login(
             @RequestBody
-            LoginRequest loginRequest,
+            Api<LoginRequest> loginRequest,
             HttpServletResponse httpServletResponse
     ) {
-        return userService.login(loginRequest, httpServletResponse);
+        var userDto = userService.login(loginRequest.getBody(), httpServletResponse);
+        return Api.OK(userDto);
     }
 
     @PostMapping("/logout")
-    public void logout(
+    public Api<String> logout(
             HttpServletResponse httpServletResponse
     ) {
         userService.logout(httpServletResponse);
+        return Api.OK("로그아웃 되었습니다.");
     }
 
 }

@@ -7,6 +7,10 @@ import com.example.word.common.domain.statistics.service.StatisticsService;
 import com.example.word.common.domain.user.db.UserEntity;
 import com.example.word.common.domain.word.db.WordEntity;
 import com.example.word.common.domain.word.model.WordInsertRequest;
+import com.example.word.common.error.ErrorCode;
+import com.example.word.common.error.UserErrorCode;
+import com.example.word.common.error.WordErrorCode;
+import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,7 +39,7 @@ public class WordService {
         var foundWord = wordRepository.findByWordAndUserId(word, userId);
 
         if (foundWord.isPresent()) {
-            throw new RuntimeException("이미 해당 단어는 존재합니다.");
+            throw new ApiException(WordErrorCode.BAD_REQUEST_WORD, "해당 단어는 존재합니다.");
         }
 
         var wordEntity = WordEntity.builder()
@@ -75,13 +79,13 @@ public class WordService {
         var optionalWord = wordRepository.findById(id);
 
         if (optionalWord.isEmpty()) {
-            throw new RuntimeException("존재하지 않는 단어입니다.");
+            throw new ApiException(WordErrorCode.WORD_NOT_FOUND);
         }
 
         var word = optionalWord.get();
 
         if (!user.getUserId().equals(word.getUserId())) {
-            throw new RuntimeException("생성한 유저가 아닙니다.");
+            throw new ApiException(UserErrorCode.USER_NOT_FOUND);
         }
 
         wordRepository.deleteById(id);
@@ -95,13 +99,13 @@ public class WordService {
         var optionalWord = wordRepository.findById(wordId);
 
         if (optionalWord.isEmpty()) {
-            throw new RuntimeException("단어를 찾을 수 없습니다");
+            throw new ApiException(WordErrorCode.WORD_NOT_FOUND);
         }
 
         var word = optionalWord.get();
 
         if (!word.getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("생성한 유저가 아닙니다.");
+            throw new ApiException(UserErrorCode.USER_NOT_FOUND);
         }
 
         word.setWord(wordInsertRequest.getWord().trim().toLowerCase());
@@ -115,13 +119,13 @@ public class WordService {
 
     public UserEntity getUserByCookie(String cookie) {
         if (cookie.isEmpty()) {
-            throw new RuntimeException("로그인을 먼저 해주세요");
+            throw new ApiException(UserErrorCode.DO_NOT_LOGIN);
         }
 
         var optionalUser = userRepository.findById(cookie);
 
         if (optionalUser.isEmpty()) {
-            throw new RuntimeException("로그인을 해주세요");
+            throw new ApiException(UserErrorCode.DO_NOT_LOGIN);
         }
 
         return optionalUser.get();

@@ -1,5 +1,7 @@
 package com.example.word.exceptionhandler;
 
+import com.example.word.common.api.Api;
+import com.example.word.common.error.ErrorCode;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,10 +16,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> globalHandler(Exception e) {
         return ResponseEntity
                 .status(500)
-                .body(
-                        // TODO Api 만들기
-                       null
-                )
+                .body(Api.ERROR(ErrorCode.SERVER_ERROR))
                 ;
     }
 }

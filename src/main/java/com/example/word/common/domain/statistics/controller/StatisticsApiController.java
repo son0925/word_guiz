@@ -1,5 +1,6 @@
 package com.example.word.common.domain.statistics.controller;
 
+import com.example.word.common.api.Api;
 import com.example.word.common.domain.statistics.service.StatisticsService;
 import com.example.word.common.domain.word.model.WordDto;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,11 @@ public class StatisticsApiController {
     private final StatisticsService statisticsService;
 
     @GetMapping("/get_quiz")
-    public List<WordDto> getQuizList(
+    public Api<List<WordDto>> getQuizList(
             @CookieValue(value = "USER", required = false)
             String cookie
     ) {
-        return statisticsService.getQuizWord(cookie);
+        var wordList = statisticsService.getQuizWord(cookie);
+        return Api.OK(wordList);
     }
 }

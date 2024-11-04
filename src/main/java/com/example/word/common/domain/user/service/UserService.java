@@ -20,7 +20,7 @@ public class UserService{
 
 
     // 회원가입
-    public Api<UserDto> register(UserDto userDto) {
+    public UserDto register(UserDto userDto) {
 
         // 회원가입 로직
         // 1. 아이디 비밀번호 있는지 확인
@@ -36,13 +36,11 @@ public class UserService{
 
         userRepository.save(userEntity);
 
-        var saveUserDto = userConverter.toDto(userEntity);
-
-        return Api.OK(saveUserDto);
+        return userConverter.toDto(userEntity);
     }
 
 
-    public Api<UserDto> login(LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
+    public UserDto login(LoginRequest loginRequest, HttpServletResponse httpServletResponse) {
 
         var id = loginRequest.getUserId();
         var password = loginRequest.getPassword();
@@ -69,8 +67,8 @@ public class UserService{
 
         httpServletResponse.addCookie(cookie);
 
-        var userDto = userConverter.toDto((user));
-        return Api.OK(userDto);
+        return userConverter.toDto((user));
+
     }
 
     public void logout(HttpServletResponse httpServletResponse) {

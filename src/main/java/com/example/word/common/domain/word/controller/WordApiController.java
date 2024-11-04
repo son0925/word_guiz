@@ -1,5 +1,6 @@
 package com.example.word.common.domain.word.controller;
 
+import com.example.word.common.api.Api;
 import com.example.word.common.domain.word.model.WordDto;
 import com.example.word.common.domain.word.model.WordInsertRequest;
 import com.example.word.common.domain.word.service.WordService;
@@ -16,43 +17,50 @@ public class WordApiController {
     private final WordService wordService;
 
     @PostMapping("/add")
-    public WordDto wordInsert(
+    public Api<WordDto> wordInsert(
             @RequestBody
-            WordInsertRequest wordInsertRequest,
+            Api<WordInsertRequest> wordInsertRequest,
             @CookieValue(name = "USER", required = false)
             String cookie
     ) {
-        return wordService.insert(wordInsertRequest, cookie);
+        var wordDto = wordService.insert(wordInsertRequest.getBody(), cookie);
+        return Api.OK(wordDto);
     }
 
     @GetMapping("/list")
-    public List<WordDto> wordList(
+    public Api<List<WordDto>> wordList(
             @CookieValue(name = "USER", required = false)
             String cookie
     ) {
-        return wordService.wordList(cookie);
+        var wordDtoList = wordService.wordList(cookie);
+        return Api.OK(wordDtoList);
     }
 
     @DeleteMapping("/delete/{wordId}")
-    public void wordDelete(
+    public Api<String> wordDelete(
             @PathVariable
             Long wordId,
             @CookieValue(name = "USER", required = false)
             String cookie
     ) {
         wordService.removeWord(wordId, cookie);
+
+
+        return Api.OK("단어를 삭제했습니다.");
     }
 
     @PutMapping("/update/{wordId}")
-    public WordDto wordUpdate(
+    public Api<WordDto> wordUpdate(
             @PathVariable
             Long wordId,
             @RequestBody
-            WordInsertRequest insertRequest,
+            Api<WordInsertRequest> insertRequest,
             @CookieValue(name = "USER", required = false)
             String cookie
     ) {
-        return wordService.updateWord(wordId, insertRequest, cookie);
+        var wordDto = wordService.updateWord(wordId, insertRequest.getBody(), cookie);
+
+        return Api.OK(wordDto);
     }
 
 
