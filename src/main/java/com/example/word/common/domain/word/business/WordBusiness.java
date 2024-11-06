@@ -4,14 +4,18 @@ import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.word.converter.WordConverter;
+import com.example.word.common.domain.word.model.WordDeleteRequest;
 import com.example.word.common.domain.word.model.WordSaveRequest;
 import com.example.word.common.domain.word.model.WordResponse;
 import com.example.word.common.domain.word.model.WordUpdateRequest;
 import com.example.word.common.domain.word.service.WordService;
 import com.example.word.common.error.ErrorCode;
+import com.example.word.common.error.TokenErrorCode;
+import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -59,12 +63,30 @@ public class WordBusiness {
         return wordConverter.toResponse(wordEntity);
     }
 
-    public List<WordResponse> getWordList() {
-        return null;
+    public List<WordResponse> getWordList(User user) {
+
+        if (Objects.isNull(user)) {
+            throw new ApiException(ErrorCode.SERVER_ERROR);
+        }
+
+        var userId = user.getUserId();
+
+        return wordService.getWordList(userId).stream()
+                .map(wordConverter::toResponse)
+                .toList();
     }
 
-    public void deleteWord() {
+    @Transactional
+    public void deleteWord(Api<WordDeleteRequest> wordIdApi, User user) {
 
+        if (Objects.isNull(user) || Objects.isNull(wordIdApi)) {
+            throw new ApiException(UserErrorCode.DO_NOT_LOGIN);
+        }
+
+        var wordId = wordIdApi.getBody().getWordId();
+        var userId = user.getUserId();
+
+        wordService.deleteWord(wordId, userId);
     }
 
 }

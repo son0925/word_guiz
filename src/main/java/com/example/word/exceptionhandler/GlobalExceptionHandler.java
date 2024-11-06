@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> globalHandler(Exception e) {
         return ResponseEntity
                 .status(500)
-                .body(Api.ERROR(ErrorCode.SERVER_ERROR))
+                .body(Api.ERROR(ErrorCode.SERVER_ERROR, e.getMessage()))
                 ;
     }
 }
