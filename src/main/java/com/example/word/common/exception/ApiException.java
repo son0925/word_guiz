@@ -13,7 +13,7 @@ public class ApiException extends RuntimeException implements ApiExceptionIfs{
     public ApiException(ErrorCodeIfs errorCodeIfs) {
         super(errorCodeIfs.getDescription());
         this.errorCodeIfs = errorCodeIfs;
-        this.errorDescription = getErrorDescription();
+        this.errorDescription = errorCodeIfs.getDescription();
     }
 
     public ApiException(ErrorCodeIfs errorCodeIfs, String description) {
