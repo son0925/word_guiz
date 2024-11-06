@@ -1,0 +1,56 @@
+package com.example.word.resolver;
+
+import com.example.word.common.annotation.UserSession;
+import com.example.word.common.domain.user.model.User;
+import com.example.word.common.domain.user.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+
+@Component
+@RequiredArgsConstructor
+public class UserSessionResolver implements HandlerMethodArgumentResolver {
+
+    private final UserService userService;
+
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        // 지원하는 파라미터 체크, 어노테이션 체크
+
+        // 1. 어노테이션이 있는지 체크
+        var annotation = parameter.hasParameterAnnotation(UserSession.class);
+        // 2. 클래스가 있는지 체크
+        var parameterType = parameter.getParameterType().equals(User.class);
+
+        return annotation && parameterType;
+    }
+
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        // supportsParameter True 반환시 여기 실행
+
+
+        // request context holder 에서 정보 찾아오기
+        var requestContext = RequestContextHolder.getRequestAttributes();
+
+        assert requestContext != null;
+        var userId = requestContext.getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
+
+        assert userId != null;
+        var userEntity = userService.getUserWithThrow(userId.toString());
+
+        // 사용자 정보 세팅
+        return User.builder()
+                .userId(userEntity.getUserId())
+                .password(userEntity.getPassword())
+                .name(userEntity.getName())
+                .build()
+                ;
+    }
+}

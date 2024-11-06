@@ -1,13 +1,13 @@
 package com.example.word.common.domain.user.service;
 
+import com.example.word.common.annotation.Converter;
 import com.example.word.common.domain.user.db.UserEntity;
-import com.example.word.common.domain.user.model.UserDto;
-import org.springframework.stereotype.Component;
+import com.example.word.common.domain.user.model.UserResponse;
 
-@Component
+@Converter
 public class UserConverter {
 
-    UserEntity toEntity(UserDto userDto) {
+    UserEntity toEntity(UserResponse userDto) {
         return UserEntity.builder()
                 .userId(userDto.getUserId())
                 .password(userDto.getPassword())
@@ -16,8 +16,8 @@ public class UserConverter {
                 ;
     }
 
-    UserDto toDto(UserEntity userEntity) {
-        return UserDto.builder()
+    UserResponse toResponse(UserEntity userEntity) {
+        return UserResponse.builder()
                 .userId(userEntity.getUserId())
                 .password(userEntity.getPassword())
                 .name(userEntity.getName())
