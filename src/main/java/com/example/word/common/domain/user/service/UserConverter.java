@@ -7,7 +7,7 @@ import com.example.word.common.domain.user.model.UserResponse;
 @Converter
 public class UserConverter {
 
-    UserEntity toEntity(UserResponse userDto) {
+    public UserEntity toEntity(UserResponse userDto) {
         return UserEntity.builder()
                 .userId(userDto.getUserId())
                 .password(userDto.getPassword())
@@ -16,7 +16,7 @@ public class UserConverter {
                 ;
     }
 
-    UserResponse toResponse(UserEntity userEntity) {
+    public UserResponse toResponse(UserEntity userEntity) {
         return UserResponse.builder()
                 .userId(userEntity.getUserId())
                 .password(userEntity.getPassword())

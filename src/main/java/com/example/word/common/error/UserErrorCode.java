@@ -12,7 +12,8 @@ import lombok.Getter;
 public enum UserErrorCode implements ErrorCodeIfs{
 
     USER_NOT_FOUND(400, 1404, "유저를 찾을 수 없습니다"),
-    DO_NOT_LOGIN(401, 1414, "로그인을 해주세요")
+    DO_NOT_LOGIN(401, 1414, "로그인을 해주세요"),
+    LOGIN_FAILED(401, 1403, "아이디 혹은 비밀번호가 틀립니다")
 
     ;
 

@@ -1,17 +1,14 @@
 package com.example.word.common.domain.user.model;
 
-
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @ToString
-public class LoginRequest {
+@Builder
+public class UserRegisterRequest {
 
     @NotBlank
     private String userId;
@@ -19,4 +16,6 @@ public class LoginRequest {
     @NotBlank
     private String password;
 
+    @NotBlank
+    private String name;
 }
