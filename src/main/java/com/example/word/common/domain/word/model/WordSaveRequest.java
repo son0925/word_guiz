@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class WordRequest {
+public class WordSaveRequest {
 
     @NotBlank
     private String word;

@@ -45,6 +45,13 @@ public class WordService {
             throw new ApiException(ErrorCode.SERVER_ERROR);
         }
 
+        var existsWord = wordRepository.findByWordAndUserId(word, userId);
+
+        // 이미 해당 단어는 존재하며 wordId 가 다를 때
+        if (existsWord.isPresent() && !existsWord.get().getWordId().equals(wordId)) {
+            throw new ApiException(WordErrorCode.EXISTS_WORD, "바꾸시는 단어는 이미 단어에 존재합니다.");
+        }
+
         var wordEntity = WordEntity.builder()
                 .wordId(wordId)
                 .word(word)

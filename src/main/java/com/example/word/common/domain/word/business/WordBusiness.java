@@ -2,20 +2,19 @@ package com.example.word.common.domain.word.business;
 
 import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
-import com.example.word.common.domain.token.business.TokenBusiness;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.word.converter.WordConverter;
-import com.example.word.common.domain.word.model.WordRequest;
+import com.example.word.common.domain.word.model.WordSaveRequest;
 import com.example.word.common.domain.word.model.WordResponse;
+import com.example.word.common.domain.word.model.WordUpdateRequest;
 import com.example.word.common.domain.word.service.WordService;
 import com.example.word.common.error.ErrorCode;
-import com.example.word.common.error.WordErrorCode;
 import com.example.word.common.exception.ApiException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Business
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class WordBusiness {
     private final WordService wordService;
     private final WordConverter wordConverter;
 
-    public WordResponse saveWord(Api<WordRequest> wordRequest, User user) {
+    public WordResponse saveWord(Api<WordSaveRequest> wordRequest, User user) {
 
         var wordData = wordRequest.getBody();
 
@@ -42,14 +41,22 @@ public class WordBusiness {
         return wordConverter.toResponse(wordEntity);
     }
 
-    public WordResponse updateWord(Api<WordRequest> wordRequest, User user) {
+    public WordResponse updateWord(Api<WordUpdateRequest> wordRequest, User user) {
         var wordData = wordRequest.getBody();
 
-        if (Objects.isNull(wordData) || wordData.getWord() == null || wordData.getMean() == null) {
-            throw new ApiException(ErrorCode.SERVER_ERROR);
+        System.out.println("hi");
+        if (Objects.isNull(wordData) || wordData.getWord() == null || wordData.getMean() == null || Objects.isNull(user)) {
+            throw new ApiException(ErrorCode.NULL_POINT);
         }
 
-        return null;
+        var wordId = wordData.getWordId();
+        var word = wordData.getWord();
+        var mean = wordData.getMean();
+        var userId = user.getUserId();
+
+        var wordEntity = wordService.wordUpdate(wordId, word, mean, userId);
+
+        return wordConverter.toResponse(wordEntity);
     }
 
     public List<WordResponse> getWordList() {
