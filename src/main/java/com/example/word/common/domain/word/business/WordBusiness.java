@@ -3,6 +3,7 @@ package com.example.word.common.domain.word.business;
 import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
 import com.example.word.common.api.Pagination;
+import com.example.word.common.domain.statistics.business.StatisticsBusiness;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.word.converter.WordConverter;
 import com.example.word.common.domain.word.model.*;
@@ -25,6 +26,9 @@ public class WordBusiness {
     private final WordService wordService;
     private final WordConverter wordConverter;
 
+    private final StatisticsBusiness statisticsBusiness;
+
+    @Transactional
     public WordResponse saveWord(Api<WordSaveRequest> wordRequest, User user) {
 
         var wordData = wordRequest.getBody();
@@ -40,9 +44,13 @@ public class WordBusiness {
 
         var wordEntity = wordService.wordSave(word, mean, userId);
 
+        // todo Statistics 생성
+        statisticsBusiness.create(wordEntity.getWordId(), userId);
+
         return wordConverter.toResponse(wordEntity);
     }
 
+    @Transactional
     public WordResponse updateWord(Api<WordUpdateRequest> wordRequest, User user) {
         var wordData = wordRequest.getBody();
 
@@ -57,6 +65,8 @@ public class WordBusiness {
         var userId = user.getUserId();
 
         var wordEntity = wordService.wordUpdate(wordId, word, mean, userId);
+
+        // todo Statistics update
 
         return wordConverter.toResponse(wordEntity);
     }
@@ -95,6 +105,8 @@ public class WordBusiness {
         if (Objects.isNull(user) || Objects.isNull(wordIdApi)) {
             throw new ApiException(UserErrorCode.DO_NOT_LOGIN);
         }
+
+        // todo Statistics 삭제하기
 
         var wordId = wordIdApi.getBody().getWordId();
         var userId = user.getUserId();
