@@ -6,6 +6,8 @@ import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.WordErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,13 +65,11 @@ public class WordService {
         return wordRepository.save(wordEntity);
     }
 
-    public List<WordEntity> getWordList(String userId) {
-
-        return wordRepository.findAllByUserId(userId);
+    public Page<WordEntity> getWordList(String userId, Pageable pageable) {
+        return wordRepository.findAllByUserId(userId, pageable);
     }
 
     public void deleteWord(Long wordId, String userId) {
         wordRepository.deleteByWordIdAndUserId(wordId, userId);
     }
-
 }

@@ -2,19 +2,17 @@ package com.example.word.common.domain.word.business;
 
 import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
+import com.example.word.common.api.Pagination;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.word.converter.WordConverter;
-import com.example.word.common.domain.word.model.WordDeleteRequest;
-import com.example.word.common.domain.word.model.WordSaveRequest;
-import com.example.word.common.domain.word.model.WordResponse;
-import com.example.word.common.domain.word.model.WordUpdateRequest;
+import com.example.word.common.domain.word.model.*;
 import com.example.word.common.domain.word.service.WordService;
 import com.example.word.common.error.ErrorCode;
-import com.example.word.common.error.TokenErrorCode;
 import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -63,7 +61,7 @@ public class WordBusiness {
         return wordConverter.toResponse(wordEntity);
     }
 
-    public List<WordResponse> getWordList(User user) {
+    public Api<List<WordResponse>> getWordList(User user, Pageable pageable) {
 
         if (Objects.isNull(user)) {
             throw new ApiException(ErrorCode.SERVER_ERROR);
@@ -71,9 +69,24 @@ public class WordBusiness {
 
         var userId = user.getUserId();
 
-        return wordService.getWordList(userId).stream()
+        // WordEntity의 페이지 정보를 포함한 목록 조회
+        var wordPage = wordService.getWordList(userId, pageable);
+
+        // WordEntity 리스트를 WordResponse 리스트로 변환
+        var wordResponses = wordPage.getContent().stream()
                 .map(wordConverter::toResponse)
                 .toList();
+
+        // Pagination 객체 생성
+        var pagination = Pagination.builder()
+                .curPage(wordPage.getNumber())
+                .curElement(wordPage.getNumberOfElements())
+                .size(wordPage.getSize())
+                .totalPage(wordPage.getTotalPages())
+                .totalElement(wordPage.getTotalElements())
+                .build();
+
+        return Api.OK(wordResponses, pagination);
     }
 
     @Transactional
@@ -88,5 +101,7 @@ public class WordBusiness {
 
         wordService.deleteWord(wordId, userId);
     }
+
+
 
 }

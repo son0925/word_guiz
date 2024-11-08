@@ -16,11 +16,21 @@ public class Api<T>{
 
     private T body;
 
+    private Pagination pagination;
+
 
     public static <T>Api<T> OK(T data) {
         return Api.<T>builder()
                 .result(Result.OK())
                 .body(data)
+                .build();
+    }
+
+    public static <T>Api<T> OK(T data, Pagination pagination) {
+        return Api.<T>builder()
+                .result(Result.OK())
+                .body(data)
+                .pagination(pagination)
                 .build();
     }
 

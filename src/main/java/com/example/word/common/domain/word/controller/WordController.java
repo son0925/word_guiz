@@ -10,6 +10,9 @@ import com.example.word.common.domain.word.model.WordResponse;
 import com.example.word.common.domain.word.model.WordUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,11 +47,12 @@ public class WordController {
 
     @GetMapping("/list")
     public Api<List<WordResponse>> getWordList(
-            @UserSession User user
+            @UserSession User user,
+            @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var wordList = wordBusiness.getWordList(user);
 
-        return Api.OK(wordList);
+        return wordBusiness.getWordList(user, pageable);
+
     }
 
     @DeleteMapping("/delete")
