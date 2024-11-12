@@ -1,6 +1,7 @@
 package com.example.word.common.api;
 
 import com.example.word.common.error.ErrorCodeIfs;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class Api<T>{
 
     private Result result;
 
+    @Valid
     private T body;
 
     private Pagination pagination;
