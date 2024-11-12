@@ -10,6 +10,8 @@ import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class StatisticsService {
@@ -39,11 +41,14 @@ public class StatisticsService {
 
 
     // TODO 읽기
-    // 특정 사용자가 현자 자신의 통계를 요청
+    // 특정 사용자가 현재 자신의 통계를 요청
+    public List<StatisticsEntity> getStatisticsList(String userId) {
+        return statisticsRepository.findAllByUserId(userId);
+    }
 
 
     // TODO 수정
-    public void update(Long wordId, String userId) {
+    public StatisticsEntity update(Long wordId, String userId) {
 
         var statisticsEntity = StatisticsEntity.builder()
                 .userId(userId)
@@ -54,10 +59,13 @@ public class StatisticsService {
                 .noQuizCount(0)
                 .build();
 
-        statisticsRepository.save(statisticsEntity);
+        return statisticsRepository.save(statisticsEntity);
     }
 
     // TODO 삭제
+    public void deleteWord(Long wordId, String userId) {
+        statisticsRepository.deleteByIdAndUserId(wordId, userId);
+    }
 
 
 }

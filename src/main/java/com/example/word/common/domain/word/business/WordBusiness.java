@@ -28,6 +28,7 @@ public class WordBusiness {
 
     private final StatisticsBusiness statisticsBusiness;
 
+
     @Transactional
     public WordResponse saveWord(Api<WordSaveRequest> wordRequest, User user) {
 
@@ -65,6 +66,8 @@ public class WordBusiness {
         var userId = user.getUserId();
 
         var wordEntity = wordService.wordUpdate(wordId, word, mean, userId);
+
+        statisticsBusiness.update(wordId, userId);
 
         // todo Statistics update
 
@@ -106,13 +109,15 @@ public class WordBusiness {
             throw new ApiException(UserErrorCode.DO_NOT_LOGIN);
         }
 
-        // todo Statistics 삭제하기
-
         var wordId = wordIdApi.getBody().getWordId();
         var userId = user.getUserId();
 
         wordService.deleteWord(wordId, userId);
+
+        statisticsBusiness.delete(wordId, userId);
+
     }
+
 
 
 
