@@ -1,7 +1,8 @@
 package com.example.word.common.domain.statistics.business;
 
 import com.example.word.common.annotation.Business;
-import com.example.word.common.domain.statistics.converter.StatisticsConverter;
+import com.example.word.common.domain.statistics.model.StatisticsUpdateRequest;
+import com.example.word.common.domain.statistics.service.StatisticsConverter;
 import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.statistics.service.StatisticsService;
 import com.example.word.common.domain.user.model.User;
@@ -44,4 +45,18 @@ public class StatisticsBusiness {
         statisticsService.deleteWord(wordId, userId);
     }
 
+
+    public List<StatisticsResponse> getWordQuizList(User user, int size) {
+        var userId = user.getUserId();
+
+        return statisticsService.getWordQuizList(userId, size).stream()
+                .map(statisticsConverter::toResponse)
+                .toList();
+    }
+
+    public void resultUpdate(User user, List<StatisticsUpdateRequest> req) {
+        var userId = user.getUserId();
+
+        statisticsService.resultUpdate(userId, req);
+    }
 }

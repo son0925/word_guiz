@@ -1,4 +1,4 @@
-package com.example.word.common.domain.token.converter;
+package com.example.word.common.domain.token.service;
 
 import com.example.word.common.annotation.Converter;
 import com.example.word.common.domain.token.model.TokenDto;

@@ -4,16 +4,18 @@ import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
 import com.example.word.common.api.Pagination;
 import com.example.word.common.domain.statistics.business.StatisticsBusiness;
+import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.user.model.User;
-import com.example.word.common.domain.word.converter.WordConverter;
+import com.example.word.common.domain.word.service.WordConverter;
 import com.example.word.common.domain.word.model.*;
 import com.example.word.common.domain.word.service.WordService;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -55,7 +57,6 @@ public class WordBusiness {
     public WordResponse updateWord(Api<WordUpdateRequest> wordRequest, User user) {
         var wordData = wordRequest.getBody();
 
-        System.out.println("hi");
         if (Objects.isNull(wordData) || wordData.getWord() == null || wordData.getMean() == null || Objects.isNull(user)) {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
@@ -74,33 +75,33 @@ public class WordBusiness {
         return wordConverter.toResponse(wordEntity);
     }
 
-    public Api<List<WordResponse>> getWordList(User user, Pageable pageable) {
-
+    public Api<List<WordResponse>> getWordList(User user, Pageable pageable, String sortBy, String order) {
         if (Objects.isNull(user)) {
             throw new ApiException(ErrorCode.SERVER_ERROR);
         }
 
         var userId = user.getUserId();
 
-        // WordEntity의 페이지 정보를 포함한 목록 조회
-        var wordPage = wordService.getWordList(userId, pageable);
+        var wordPage = wordService.getWordList(userId, pageable, sortBy, order);
 
-        // WordEntity 리스트를 WordResponse 리스트로 변환
         var wordResponses = wordPage.getContent().stream()
                 .map(wordConverter::toResponse)
                 .toList();
 
-        // Pagination 객체 생성
         var pagination = Pagination.builder()
                 .curPage(wordPage.getNumber())
                 .curElement(wordPage.getNumberOfElements())
                 .size(wordPage.getSize())
                 .totalPage(wordPage.getTotalPages())
                 .totalElement(wordPage.getTotalElements())
+                .sortBy(sortBy)
+                .order(order)
                 .build();
 
         return Api.OK(wordResponses, pagination);
     }
+
+
 
     @Transactional
     public void deleteWord(Api<WordDeleteRequest> wordIdApi, User user) {
@@ -119,6 +120,17 @@ public class WordBusiness {
     }
 
 
+    public List<WordResponse> getWordQuizList(User user, int size) {
+        var statisticsList = statisticsBusiness.getWordQuizList(user, size);
+
+        var wordIdList = statisticsList.stream()
+                .map(StatisticsResponse::getWordId)
+                .toList()
+                ;
 
 
+        return wordService.getWordList(wordIdList).stream()
+                .map(wordConverter::toResponse)
+                .toList();
+    }
 }

@@ -7,7 +7,9 @@ import com.example.word.common.error.WordErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -68,11 +70,25 @@ public class WordService {
         return wordRepository.save(wordEntity);
     }
 
-    public Page<WordEntity> getWordList(String userId, Pageable pageable) {
-        return wordRepository.findAllByUserId(userId, pageable);
+    public Page<WordEntity> getWordList(String userId, Pageable pageable, String sortBy, String order) {
+
+        // Handle sorting based on parameters (sortBy and order)
+        Sort sort = Sort.by(Sort.Order.desc(sortBy));  // Default to descending order
+        if ("asc".equalsIgnoreCase(order)) {
+            sort = Sort.by(Sort.Order.asc(sortBy));  // Change to ascending order if 'asc' is passed
+        }
+
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        return wordRepository.findAllByUserId(userId, sortedPageable);
     }
 
     public void deleteWord(Long wordId, String userId) {
         wordRepository.deleteByWordIdAndUserId(wordId, userId);
+    }
+
+
+    public List<WordEntity> getWordList(List<Long> wordIdList) {
+        return wordRepository.findByWordIdIn(wordIdList);
     }
 }

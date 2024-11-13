@@ -1,4 +1,4 @@
-package com.example.word.common.domain.statistics.converter;
+package com.example.word.common.domain.statistics.service;
 
 import com.example.word.common.annotation.Converter;
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
@@ -12,7 +12,7 @@ public class StatisticsConverter {
                 .id(response.getId())
                 .userId(response.getUserId())
                 .wordId(response.getWordId())
-                .lastQuizDate(response.getLastQuizDate())
+                .status(response.getStatus())
                 .correctAnswerCount(response.getCorrectAnswerCount())
                 .totalQuizCount(response.getTotalQuizCount())
                 .noQuizCount(response.getNoQuizCount())
@@ -24,7 +24,7 @@ public class StatisticsConverter {
                 .id(entity.getId())
                 .userId(entity.getUserId())
                 .wordId(entity.getWordId())
-                .lastQuizDate(entity.getLastQuizDate())
+                .status(entity.getStatus())
                 .correctAnswerCount(entity.getCorrectAnswerCount())
                 .totalQuizCount(entity.getTotalQuizCount())
                 .noQuizCount(entity.getNoQuizCount())

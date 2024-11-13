@@ -1,4 +1,4 @@
-package com.example.word.common.domain.word.converter;
+package com.example.word.common.domain.word.service;
 
 import com.example.word.common.annotation.Converter;
 import com.example.word.common.domain.word.model.WordEntity;

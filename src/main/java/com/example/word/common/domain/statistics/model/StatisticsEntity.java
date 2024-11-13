@@ -1,13 +1,12 @@
 package com.example.word.common.domain.statistics.model;
 
+import com.example.word.common.domain.statistics.model.enums.StatisticsStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "statistics")
@@ -26,7 +25,8 @@ public class StatisticsEntity {
 
     private Long wordId;
 
-    private LocalDateTime lastQuizDate;
+    @Enumerated(EnumType.STRING)
+    private StatisticsStatus status;
 
     private int correctAnswerCount;
 

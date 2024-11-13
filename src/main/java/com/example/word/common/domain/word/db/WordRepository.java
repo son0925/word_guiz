@@ -21,4 +21,6 @@ public interface WordRepository extends JpaRepository<WordEntity, Long> {
 
     Page<WordEntity> findAllByUserId(String userId, Pageable pageable);
 
+    List<WordEntity> findByWordIdIn(List<Long> wordIdList);
+
 }

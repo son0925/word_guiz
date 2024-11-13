@@ -48,12 +48,13 @@ public class WordController {
     @GetMapping("/list")
     public Api<List<WordResponse>> getWordList(
             @UserSession User user,
+            @RequestParam(defaultValue = "word") String sortBy,
+            @RequestParam(defaultValue = "asc") String order,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-
-        return wordBusiness.getWordList(user, pageable);
-
+        return wordBusiness.getWordList(user, pageable, sortBy, order);
     }
+
 
     @DeleteMapping("/delete")
     public Api<String> deleteWord(
@@ -65,5 +66,13 @@ public class WordController {
         wordBusiness.deleteWord(word, user);
 
         return Api.OK("단어가 삭제되었습니다.");
+    }
+
+    @GetMapping("/quiz")
+    public Api<List<WordResponse>> getWordQuizList(
+            @UserSession User user,
+            @RequestParam int size
+    ) {
+        return Api.OK(wordBusiness.getWordQuizList(user, size));
     }
 }
