@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,5 +24,11 @@ public class UserEntity {
     private String password;
 
     private String name;
+
+    private LocalDateTime birthdate;
+
+    private LocalDateTime lastLoginTime;
+
+    private String profileUrl;
 
 }

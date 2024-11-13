@@ -4,6 +4,8 @@ import com.example.word.common.domain.user.db.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,5 +23,7 @@ public class WordEntity {
     private String mean;
 
     private String userId;
+
+    private LocalDateTime addedDate;
 
 }

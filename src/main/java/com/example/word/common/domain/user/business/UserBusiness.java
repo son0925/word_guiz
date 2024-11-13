@@ -55,8 +55,9 @@ public class UserBusiness {
         var userId = user.getUserId();
         var password = user.getPassword();
         var name = user.getName();
+        var birthdate = userConverter.convertToLocalDateTime(user.getBirthdate());
 
-        var userEntity = userService.register(userId, password, name);
+        var userEntity = userService.register(userId, password, name, birthdate);
 
         return userConverter.toResponse(userEntity);
 

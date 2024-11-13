@@ -2,6 +2,8 @@ package com.example.word.common.domain.word.model;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,5 +18,7 @@ public class WordResponse {
     private String mean;
 
     private String userId;
+
+    private LocalDateTime addedDate;
 
 }

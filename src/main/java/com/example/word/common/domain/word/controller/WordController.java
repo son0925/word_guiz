@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/word")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class WordController {
 
     private final WordBusiness wordBusiness;
@@ -36,7 +37,6 @@ public class WordController {
 
     @PutMapping("/update")
     public Api<WordResponse> wordUpdate(
-            @Valid
             @RequestBody
             Api<WordUpdateRequest> wordRequest,
             @UserSession User user

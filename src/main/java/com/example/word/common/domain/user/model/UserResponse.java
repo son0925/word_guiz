@@ -2,6 +2,8 @@ package com.example.word.common.domain.user.model;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,4 +17,9 @@ public class UserResponse {
 
     private String name;
 
+    private LocalDateTime birthdate;
+
+    private LocalDateTime lastLoginTime;
+
+    private String profileUrl;
 }

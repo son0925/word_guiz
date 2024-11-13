@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class JwtTokenHelper implements TokenHelperIfs {
@@ -41,11 +42,13 @@ public class JwtTokenHelper implements TokenHelperIfs {
 
         var key = Keys.hmacShaKeyFor(secretKey.getBytes());
 
+
         var jwtToken = Jwts.builder()
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiredAt)
                 .setClaims(data)
                 .compact();
+
 
         return TokenDto.builder()
                 .token(jwtToken)

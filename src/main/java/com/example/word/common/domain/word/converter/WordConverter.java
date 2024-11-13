@@ -13,6 +13,7 @@ public class WordConverter {
                 .word(wordResponse.getWord())
                 .mean(wordResponse.getMean())
                 .userId(wordResponse.getUserId())
+                .addedDate(wordResponse.getAddedDate())
                 .build()
                 ;
     }
@@ -24,6 +25,7 @@ public class WordConverter {
                 .word(wordEntity.getWord())
                 .mean(wordEntity.getMean())
                 .userId(wordEntity.getUserId())
+                .addedDate(wordEntity.getAddedDate())
                 .build()
                 ;
     }

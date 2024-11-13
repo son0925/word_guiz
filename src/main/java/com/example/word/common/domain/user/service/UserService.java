@@ -8,6 +8,7 @@ import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -32,18 +33,23 @@ public class UserService {
             throw new ApiException(UserErrorCode.LOGIN_FAILED, "아이디 혹은 비밀번호가 틀립니다.");
         }
 
+        userEntity.setLastLoginTime(LocalDateTime.now());
+
+        userRepository.save(userEntity);
+
         return userEntity;
     }
 
 
 
     // 회원가입
-    public UserEntity register(String userId, String password, String name) {
+    public UserEntity register(String userId, String password, String name, LocalDateTime birthdate) {
 
         var userEntity = UserEntity.builder()
                 .userId(userId)
                 .password(password)
                 .name(name)
+                .birthdate(birthdate)
                 .build();
 
         return userRepository.save(userEntity);

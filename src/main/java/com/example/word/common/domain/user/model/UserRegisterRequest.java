@@ -19,4 +19,6 @@ public class UserRegisterRequest {
     @NotBlank(message = "Name은 필수입니다.")
     private String name;
 
+    private String birthdate;
+
 }
