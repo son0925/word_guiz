@@ -4,10 +4,7 @@ import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
 import com.example.word.common.domain.token.business.TokenBusiness;
 import com.example.word.common.domain.token.model.TokenResponse;
-import com.example.word.common.domain.user.model.LoginRequest;
-import com.example.word.common.domain.user.model.User;
-import com.example.word.common.domain.user.model.UserRegisterRequest;
-import com.example.word.common.domain.user.model.UserResponse;
+import com.example.word.common.domain.user.model.*;
 import com.example.word.common.domain.user.service.UserConverter;
 import com.example.word.common.domain.user.service.UserService;
 import com.example.word.common.error.ErrorCode;
@@ -27,6 +24,7 @@ public class UserBusiness {
     private final TokenBusiness tokenBusiness;
 
 
+    // 유저 로그인
     public TokenResponse login(Api<LoginRequest> req) {
 
         var user = req.getBody();
@@ -41,9 +39,11 @@ public class UserBusiness {
 
         var userEntity = userService.login(userId, password);
 
+        // TODO Cookie 저장하기
         return tokenBusiness.issueToken(userEntity);
     }
 
+    // 유저 회원가입
     public UserResponse register(Api<UserRegisterRequest> req) {
 
         var user = req.getBody();
@@ -55,11 +55,48 @@ public class UserBusiness {
         var userId = user.getUserId();
         var password = user.getPassword();
         var name = user.getName();
+
+        System.out.println(user.getBirthdate());
         var birthdate = userConverter.convertToLocalDateTime(user.getBirthdate());
 
         var userEntity = userService.register(userId, password, name, birthdate);
 
         return userConverter.toResponse(userEntity);
 
+    }
+
+    // ID 중복 체크
+    public String existentUserWithThrow(String userId) {
+        if (userId.isBlank()) {
+            throw new ApiException(ErrorCode.NULL_POINT, "잘못된 요청입니다.");
+        }
+
+        return userService.existentUserWithThrow(userId);
+    }
+
+
+    // 휴먼 계정 활성화
+    public UserResponse accountActivation(LoginRequest req) {
+
+        if (Objects.isNull(req) || req.getUserId() == null || req.getPassword() == null) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        var userId = req.getUserId();
+        var password = req.getPassword();
+
+        var response = userService.accountActivation(userId, password);
+
+        return userConverter.toResponse(response);
+    }
+
+    public UserEntity findByUserWithThrow(User user) {
+        if (Objects.isNull(user) || user.getUserId() == null) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        var userId = user.getUserId();
+
+        return userService.getUserWithThrow(userId);
     }
 }

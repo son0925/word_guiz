@@ -1,5 +1,6 @@
 package com.example.word.common.domain.user.model;
 
+import com.example.word.common.domain.user.model.enums.UserStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,8 @@ public class UserResponse {
     private String password;
 
     private String name;
+
+    private UserStatus status;
 
     private LocalDateTime birthdate;
 

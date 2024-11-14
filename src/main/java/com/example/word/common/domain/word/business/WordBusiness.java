@@ -4,8 +4,11 @@ import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
 import com.example.word.common.api.Pagination;
 import com.example.word.common.domain.statistics.business.StatisticsBusiness;
+import com.example.word.common.domain.statistics.model.StatisticsId;
 import com.example.word.common.domain.statistics.model.StatisticsResponse;
+import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.User;
+import com.example.word.common.domain.user.service.UserConverter;
 import com.example.word.common.domain.word.service.WordConverter;
 import com.example.word.common.domain.word.model.*;
 import com.example.word.common.domain.word.service.WordService;
@@ -13,9 +16,7 @@ import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -27,6 +28,9 @@ public class WordBusiness {
 
     private final WordService wordService;
     private final WordConverter wordConverter;
+
+    private final UserBusiness userBusiness;
+    private final UserConverter userConverter;
 
     private final StatisticsBusiness statisticsBusiness;
 
@@ -43,12 +47,11 @@ public class WordBusiness {
         var word = wordData.getWord();
         var mean = wordData.getMean();
 
-        var userId = user.getUserId();
+        var userEntity = userBusiness.findByUserWithThrow(user);
 
-        var wordEntity = wordService.wordSave(word, mean, userId);
+        var wordEntity = wordService.wordSave(word, mean, userEntity);
 
-        // todo Statistics 생성
-        statisticsBusiness.create(wordEntity.getWordId(), userId);
+        statisticsBusiness.create(wordEntity, userEntity);
 
         return wordConverter.toResponse(wordEntity);
     }
@@ -61,19 +64,28 @@ public class WordBusiness {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
 
-        var wordId = wordData.getWordId();
-        var word = wordData.getWord();
-        var mean = wordData.getMean();
-        var userId = user.getUserId();
+        var optionalWordEntity = wordService.getWordByWordId(wordData.getWordId());
 
-        var wordEntity = wordService.wordUpdate(wordId, word, mean, userId);
+        if (optionalWordEntity.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
 
-        statisticsBusiness.update(wordId, userId);
+        var updateWord = wordData.getWord();
+        var updateMean = wordData.getMean();
 
-        // todo Statistics update
+        var optionalWord = wordService.getWordByWordId(wordData.getWordId());
 
-        return wordConverter.toResponse(wordEntity);
+        if (optionalWord.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        var updateWordEntity = wordService.updateWord(optionalWord.get(), updateWord, updateMean);
+
+        statisticsBusiness.updateStatistics(updateWordEntity);
+
+        return wordConverter.toResponse(updateWordEntity);
     }
+
 
     public Api<List<WordResponse>> getWordList(User user, Pageable pageable, String sortBy, String order) {
         if (Objects.isNull(user)) {
@@ -115,7 +127,10 @@ public class WordBusiness {
 
         wordService.deleteWord(wordId, userId);
 
-        statisticsBusiness.delete(wordId, userId);
+        statisticsBusiness.delete(StatisticsId.builder()
+                        .wordId(wordId)
+                        .userId(userId)
+                        .build());
 
     }
 
@@ -133,4 +148,6 @@ public class WordBusiness {
                 .map(wordConverter::toResponse)
                 .toList();
     }
+
+
 }

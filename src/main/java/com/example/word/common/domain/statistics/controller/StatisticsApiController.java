@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/statistics")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class StatisticsApiController {
 
     private final StatisticsBusiness statisticsBusiness;
@@ -25,7 +24,6 @@ public class StatisticsApiController {
             User user
     ) {
         var response = statisticsBusiness.read(user);
-
         return Api.OK(response);
     }
 
@@ -34,10 +32,7 @@ public class StatisticsApiController {
             @UserSession User user,
             @RequestBody List<StatisticsUpdateRequest> req
     ) {
-
-        System.out.println(req);
         statisticsBusiness.resultUpdate(user, req);
-
         return Api.OK("업데이트 완료");
     }
 

@@ -1,7 +1,7 @@
 package com.example.word.common.domain.user.service;
 
 import com.example.word.common.annotation.Converter;
-import com.example.word.common.domain.user.db.UserEntity;
+import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.user.model.UserResponse;
 
 import java.time.LocalDateTime;
@@ -10,14 +10,15 @@ import java.time.format.DateTimeFormatter;
 @Converter
 public class UserConverter {
 
-    public UserEntity toEntity(UserResponse userDto) {
+    public UserEntity toEntity(UserResponse response) {
         return UserEntity.builder()
-                .userId(userDto.getUserId())
-                .password(userDto.getPassword())
-                .name(userDto.getName())
-                .birthdate(userDto.getBirthdate())
-                .lastLoginTime(userDto.getLastLoginTime())
-                .profileUrl(userDto.getProfileUrl())
+                .userId(response.getUserId())
+                .password(response.getPassword())
+                .name(response.getName())
+                .status(response.getStatus())
+                .birthdate(response.getBirthdate())
+                .lastLoginTime(response.getLastLoginTime())
+                .profileUrl(response.getProfileUrl())
                 .build()
                 ;
     }
@@ -27,6 +28,7 @@ public class UserConverter {
                 .userId(userEntity.getUserId())
                 .password(userEntity.getPassword())
                 .name(userEntity.getName())
+                .status(userEntity.getStatus())
                 .birthdate(userEntity.getBirthdate())
                 .lastLoginTime(userEntity.getLastLoginTime())
                 .profileUrl(userEntity.getProfileUrl())

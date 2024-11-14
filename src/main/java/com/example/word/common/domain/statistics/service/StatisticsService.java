@@ -2,8 +2,11 @@ package com.example.word.common.domain.statistics.service;
 
 import com.example.word.common.domain.statistics.db.StatisticsRepository;
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
+import com.example.word.common.domain.statistics.model.StatisticsId;
 import com.example.word.common.domain.statistics.model.StatisticsUpdateRequest;
 import com.example.word.common.domain.statistics.model.enums.StatisticsStatus;
+import com.example.word.common.domain.user.model.UserEntity;
+import com.example.word.common.domain.word.model.WordEntity;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.StatisticsErrorCode;
 import com.example.word.common.exception.ApiException;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,21 +25,32 @@ public class StatisticsService {
     private final StatisticsRepository statisticsRepository;
 
 
-    public void create(Long wordId, String userId) {
+    public void create(WordEntity word, UserEntity user) {
+
+        var id = StatisticsId.builder()
+                .userId(user.getUserId())
+                .wordId(word.getWordId())
+                .build();
+
 
         // 이미 저장된 단어라면 Error 처리
-        if (statisticsRepository.existsByWordIdAndUserId(wordId, userId)) {
+        if (statisticsRepository.existsById(id)) {
             throw new ApiException(StatisticsErrorCode.SAVE_FAILED);
         }
 
         var statisticsEntity = StatisticsEntity.builder()
-                .userId(userId)
-                .wordId(wordId)
+                .id(StatisticsId.builder()
+                        .userId(id.getUserId())
+                        .wordId(id.getWordId())
+                        .build())
                 .status(StatisticsStatus.NO_ANSWER)
                 .correctAnswerCount(0)
                 .totalQuizCount(0L)
                 .noQuizCount(0)
+                .word(word)
+                .user(user)
                 .build();
+
 
         statisticsRepository.save(statisticsEntity);
     }
@@ -43,15 +58,15 @@ public class StatisticsService {
 
     // 특정 사용자가 현재 자신의 통계를 요청
     public List<StatisticsEntity> getStatisticsList(String userId) {
-        return statisticsRepository.findAllByUserId(userId);
+        return statisticsRepository.findAllByIdUserId(userId);
     }
 
 
-    public StatisticsEntity update(Long wordId, String userId) {
-
-        var entity = statisticsRepository.findAllByUserIdAndWordId(userId, wordId)
+    public StatisticsEntity update(WordEntity word, UserEntity user) {
+        var entity = statisticsRepository.findByWordAndUser(word, user)
                 .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
 
+        // 통계 업데이트
         entity.setNoQuizCount(0);
         entity.setTotalQuizCount(0L);
         entity.setCorrectAnswerCount(0);
@@ -60,8 +75,9 @@ public class StatisticsService {
         return statisticsRepository.save(entity);
     }
 
-    public void deleteWord(Long wordId, String userId) {
-        statisticsRepository.deleteByIdAndUserId(wordId, userId);
+
+    public void deleteWord(StatisticsId id) {
+        statisticsRepository.deleteById(id);
     }
 
     // 단어 퀴즈 알고리즘
@@ -73,9 +89,8 @@ public class StatisticsService {
      * 4. 정답률이 저조한 단어
      */
     public List<StatisticsEntity> getWordQuizList(String userId, int size) {
-        var statisticsList = statisticsRepository.findAllByUserId(userId);
+        var statisticsList = statisticsRepository.findAllByIdUserId(userId);
 
-        statisticsList.forEach(it -> System.out.println(it.getWordId()));
 
         // 퀴즈를 한 번도 하지 않은 단어
         var wordQuizList = statisticsList.stream()
@@ -134,14 +149,18 @@ public class StatisticsService {
 
     public void resultUpdate(String userId, List<StatisticsUpdateRequest> statisticsList) {
         for (StatisticsUpdateRequest result : statisticsList) {
-            updateStatus(userId, result.getWordId(), result.getStatus());
+            updateStatus(StatisticsId.builder()
+                    .userId(userId)
+                    .wordId(result.getWordId())
+                    .build()
+                    , result.getStatus());
         }
 
         var wordIdList = statisticsList.stream()
                 .map(StatisticsUpdateRequest::getWordId)
                 .toList();
 
-        var noAnswerEntities = statisticsRepository.findAllByUserIdAndWordIdNotIn(userId, wordIdList);
+        var noAnswerEntities = statisticsRepository.findAllByIdUserIdAndIdWordIdNotIn(userId, wordIdList);
 
         noAnswerEntities.forEach(it -> {
             it.setNoQuizCount(it.getNoQuizCount() + 1);
@@ -150,8 +169,8 @@ public class StatisticsService {
         statisticsRepository.saveAll(noAnswerEntities);
     }
 
-    public void updateStatus(String userId, Long wordId, StatisticsStatus status) {
-        var entity = statisticsRepository.findAllByUserIdAndWordId(userId, wordId)
+    public void updateStatus(StatisticsId id, StatisticsStatus status) {
+        var entity = statisticsRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
 
         entity.setStatus(status);
@@ -161,5 +180,26 @@ public class StatisticsService {
         entity.setTotalQuizCount(entity.getTotalQuizCount() + 1);
 
         statisticsRepository.save(entity);
+    }
+
+    public Optional<StatisticsEntity> getStatisticsEntity(WordEntity wordEntity, UserEntity userEntity) {
+        return statisticsRepository.findByWordAndUser(wordEntity, userEntity);
+    }
+
+    public void updateStatistics(WordEntity wordEntity, UserEntity userEntity) {
+        var optionalStatisticsEntity = statisticsRepository.findByWordAndUser(wordEntity, userEntity);
+
+        if (optionalStatisticsEntity.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        var statisticsEntity = optionalStatisticsEntity.get();
+
+        statisticsEntity.setStatus(StatisticsStatus.NO_ANSWER);
+        statisticsEntity.setNoQuizCount(0);
+        statisticsEntity.setCorrectAnswerCount(0);
+        statisticsEntity.setTotalQuizCount(0);
+
+        statisticsRepository.save(statisticsEntity);
     }
 }

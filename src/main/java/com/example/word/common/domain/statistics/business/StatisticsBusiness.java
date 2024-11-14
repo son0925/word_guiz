@@ -1,11 +1,19 @@
 package com.example.word.common.domain.statistics.business;
 
 import com.example.word.common.annotation.Business;
+import com.example.word.common.domain.statistics.model.StatisticsEntity;
+import com.example.word.common.domain.statistics.model.StatisticsId;
 import com.example.word.common.domain.statistics.model.StatisticsUpdateRequest;
 import com.example.word.common.domain.statistics.service.StatisticsConverter;
 import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.statistics.service.StatisticsService;
+import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.User;
+import com.example.word.common.domain.user.model.UserEntity;
+import com.example.word.common.domain.user.service.UserConverter;
+import com.example.word.common.domain.word.model.WordEntity;
+import com.example.word.common.error.ErrorCode;
+import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -18,11 +26,13 @@ public class StatisticsBusiness {
 
     private final StatisticsConverter statisticsConverter;
 
+    private final UserBusiness userBusiness;
 
-    public void create(Long wordId, String userId) {
+    private final UserConverter userConverter;
 
-        statisticsService.create(wordId, userId);
 
+    public void create(WordEntity word, UserEntity user) {
+        statisticsService.create(word, user);
     }
 
     public List<StatisticsResponse> read(User user) {
@@ -35,14 +45,16 @@ public class StatisticsBusiness {
                 .toList();
     }
 
-    public void update(Long wordId, String userId) {
-        var updateEntity = statisticsService.update(wordId, userId);
+    public void updateStatistics(WordEntity wordEntity) {
 
-        statisticsConverter.toResponse(updateEntity);
+        var userEntity = wordEntity.getUser();
+
+        statisticsService.updateStatistics(wordEntity, userEntity);
+
     }
 
-    public void delete(Long wordId, String userId) {
-        statisticsService.deleteWord(wordId, userId);
+    public void delete(StatisticsId id) {
+        statisticsService.deleteWord(id);
     }
 
 
@@ -59,4 +71,16 @@ public class StatisticsBusiness {
 
         statisticsService.resultUpdate(userId, req);
     }
+
+    public StatisticsEntity getStatistics(WordEntity wordEntity, UserEntity userEntity) {
+
+        var optionalStatisticsEntity = statisticsService.getStatisticsEntity(wordEntity, userEntity);
+
+        if (optionalStatisticsEntity.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+        return optionalStatisticsEntity.get();
+    }
+
+
 }

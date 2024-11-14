@@ -4,6 +4,8 @@ import com.example.word.common.annotation.Converter;
 import com.example.word.common.domain.word.model.WordEntity;
 import com.example.word.common.domain.word.model.WordResponse;
 
+import java.time.LocalDateTime;
+
 @Converter
 public class WordConverter {
 
@@ -12,7 +14,6 @@ public class WordConverter {
                 .wordId(wordResponse.getWordId())
                 .word(wordResponse.getWord())
                 .mean(wordResponse.getMean())
-                .userId(wordResponse.getUserId())
                 .addedDate(wordResponse.getAddedDate())
                 .build()
                 ;
@@ -24,7 +25,6 @@ public class WordConverter {
                 .wordId(wordEntity.getWordId())
                 .word(wordEntity.getWord())
                 .mean(wordEntity.getMean())
-                .userId(wordEntity.getUserId())
                 .addedDate(wordEntity.getAddedDate())
                 .build()
                 ;

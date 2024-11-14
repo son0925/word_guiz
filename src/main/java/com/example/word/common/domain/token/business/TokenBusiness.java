@@ -4,7 +4,7 @@ import com.example.word.common.annotation.Business;
 import com.example.word.common.domain.token.service.TokenConverter;
 import com.example.word.common.domain.token.model.TokenResponse;
 import com.example.word.common.domain.token.service.TokenService;
-import com.example.word.common.domain.user.db.UserEntity;
+import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;

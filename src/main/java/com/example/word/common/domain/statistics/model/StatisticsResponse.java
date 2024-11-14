@@ -1,6 +1,8 @@
 package com.example.word.common.domain.statistics.model;
 
 import com.example.word.common.domain.statistics.model.enums.StatisticsStatus;
+import com.example.word.common.domain.user.model.UserEntity;
+import com.example.word.common.domain.word.model.WordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +16,6 @@ import java.time.LocalDateTime;
 @Builder
 public class StatisticsResponse {
 
-    private Long id;
-
     private String userId;
 
     private Long wordId;
@@ -27,5 +27,9 @@ public class StatisticsResponse {
     private int noQuizCount;
 
     private Long totalQuizCount;
+
+    private UserEntity user;
+
+    private WordEntity word;
 
 }

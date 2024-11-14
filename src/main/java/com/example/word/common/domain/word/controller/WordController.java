@@ -20,7 +20,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/word")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class WordController {
 
     private final WordBusiness wordBusiness;

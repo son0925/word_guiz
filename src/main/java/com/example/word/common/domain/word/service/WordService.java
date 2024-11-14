@@ -1,8 +1,10 @@
 package com.example.word.common.domain.word.service;
 
+import com.example.word.common.domain.statistics.business.StatisticsBusiness;
+import com.example.word.common.domain.user.model.UserEntity;
+import com.example.word.common.domain.user.service.UserConverter;
 import com.example.word.common.domain.word.db.WordRepository;
 import com.example.word.common.domain.word.model.WordEntity;
-import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.WordErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +25,9 @@ public class WordService {
     private final WordRepository wordRepository;
 
 
-    public WordEntity wordSave(String word, String mean, String userId) {
+    public WordEntity wordSave(String word, String mean, UserEntity user) {
 
-        if (word == null || mean == null || userId == null) {
-            throw new ApiException(ErrorCode.SERVER_ERROR);
-        }
-
-        var existsWord = wordRepository.findByWordAndUserId(word, userId);
+        var existsWord = wordRepository.findByWordAndUser(word, user);
 
         if (existsWord.isPresent()) {
             throw new ApiException(WordErrorCode.EXISTS_WORD);
@@ -37,58 +36,48 @@ public class WordService {
         var wordEntity = WordEntity.builder()
                 .word(word)
                 .mean(mean)
-                .userId(userId)
                 .addedDate(LocalDateTime.now())
+                .user(user)
                 .build()
                 ;
 
         return wordRepository.save(wordEntity);
     }
 
-    public WordEntity wordUpdate(Long wordId, String word, String mean, String userId) {
+    public WordEntity updateWord(WordEntity wordEntity, String updateWord, String updateMean) {
 
-        if (wordId == null || word == null || mean == null || userId == null) {
-            throw new ApiException(ErrorCode.SERVER_ERROR);
-        }
-
-        var existsWord = wordRepository.findByWordAndUserId(word, userId);
-
-        // 이미 해당 단어는 존재하며 wordId 가 다를 때
-        if (existsWord.isPresent() && !existsWord.get().getWordId().equals(wordId)) {
-            throw new ApiException(WordErrorCode.EXISTS_WORD, "바꾸시는 단어는 이미 단어에 존재합니다.");
-        }
-
-        var wordEntity = WordEntity.builder()
-                .wordId(wordId)
-                .word(word)
-                .mean(mean)
-                .userId(userId)
-                .addedDate(LocalDateTime.now())
-                .build()
-                ;
+        wordEntity.setWord(updateWord);
+        wordEntity.setMean(updateMean);
 
         return wordRepository.save(wordEntity);
+
     }
+
 
     public Page<WordEntity> getWordList(String userId, Pageable pageable, String sortBy, String order) {
 
-        // Handle sorting based on parameters (sortBy and order)
-        Sort sort = Sort.by(Sort.Order.desc(sortBy));  // Default to descending order
+        Sort sort = Sort.by(Sort.Order.desc(sortBy));
         if ("asc".equalsIgnoreCase(order)) {
-            sort = Sort.by(Sort.Order.asc(sortBy));  // Change to ascending order if 'asc' is passed
+            sort = Sort.by(Sort.Order.asc(sortBy));
         }
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        return wordRepository.findAllByUserId(userId, sortedPageable);
+        return wordRepository.findAllByUser_UserId(userId, sortedPageable);
     }
 
     public void deleteWord(Long wordId, String userId) {
-        wordRepository.deleteByWordIdAndUserId(wordId, userId);
+        wordRepository.deleteByWordIdAndUser_UserId(wordId, userId);
     }
 
 
     public List<WordEntity> getWordList(List<Long> wordIdList) {
         return wordRepository.findByWordIdIn(wordIdList);
     }
+
+    public Optional<WordEntity> getWordByWordId(Long wordId) {
+        return wordRepository.findByWordId(wordId);
+    }
+
+
 }

@@ -1,24 +1,32 @@
 package com.example.word.common.domain.statistics.db;
 
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
+import com.example.word.common.domain.statistics.model.StatisticsId;
+import com.example.word.common.domain.user.model.UserEntity;
+import com.example.word.common.domain.word.model.WordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface StatisticsRepository extends JpaRepository<StatisticsEntity,Long> {
+public interface StatisticsRepository extends JpaRepository<StatisticsEntity, StatisticsId> {
 
-    // 존재하는지 유무
-    boolean existsByWordIdAndUserId(Long wordId, String userId);
+    // 존재하는지 유무 확인 (복합 키 StatisticsId 사용)
+    boolean existsById(StatisticsId id);
 
-    // 해당 유저의 통계 보내기
-    List<StatisticsEntity> findAllByUserId(String userId);
+    // 해당 유저의 모든 통계 조회
+    List<StatisticsEntity> findAllByIdUserId(String userId);
 
-    // word 삭제할 때 같이 삭제
-    void deleteByIdAndUserId(Long wordId, String userId);
+    // 특정 wordId와 userId로 삭제 (복합 키 사용)
+    void deleteById(StatisticsId statisticsId);
 
-    Optional<StatisticsEntity> findAllByUserIdAndWordId(String userId, Long wordId);
+    Optional<StatisticsEntity> findByIdUserId(String userId);
 
-    List<StatisticsEntity> findAllByUserIdAndWordIdNotIn(String userId, List<Long> wordIds);
+    // 특정 userId와 wordId로 조회
+    Optional<StatisticsEntity> findByIdUserIdAndIdWordId(String userId, Long wordId);
 
+    // userId와 주어진 wordIds에 포함되지 않은 통계 목록 조회
+    List<StatisticsEntity> findAllByIdUserIdAndIdWordIdNotIn(String userId, List<Long> wordIds);
+
+    Optional<StatisticsEntity> findByWordAndUser(WordEntity wordEntity, UserEntity userEntity);
 }
