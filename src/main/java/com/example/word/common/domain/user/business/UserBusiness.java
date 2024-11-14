@@ -10,7 +10,9 @@ import com.example.word.common.domain.user.service.UserService;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Business
@@ -97,6 +99,23 @@ public class UserBusiness {
 
         var userId = user.getUserId();
 
-        return userService.getUserWithThrow(userId);
+        return userService.findByUserIdWithThrow(userId);
+    }
+
+    public UserResponse info(User user) {
+
+        var userId = user.getUserId();
+
+        var entity = userService.findByUserIdWithThrow(userId);
+
+        return userConverter.toResponse(entity);
+
+    }
+
+
+    public void saveProfileUrl(MultipartFile image, User user) throws IOException {
+        var userId = user.getUserId();
+
+        userService.saveProfileUrl(image, userId);
     }
 }

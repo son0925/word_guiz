@@ -6,9 +6,12 @@ import com.example.word.common.domain.user.model.enums.UserStatus;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
+import com.example.word.common.utils.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -17,6 +20,8 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final ImageService imageService;
 
 
     // 로그인
@@ -76,7 +81,7 @@ public class UserService {
     }
 
 
-    public UserEntity getUserWithThrow(String userId) {
+    public UserEntity findByUserIdWithThrow(String userId) {
 
         var userEntity = userRepository.findByUserIdAndStatus(userId, UserStatus.REGISTER);
 
@@ -118,5 +123,21 @@ public class UserService {
         userEntity.setStatus(UserStatus.REGISTER);
 
         return userRepository.save(userEntity);
+    }
+
+    public void saveProfileUrl(MultipartFile image, String userId) throws IOException {
+        var path = imageService.saveImage(image);
+
+        var optionalUserEntity = userRepository.findByUserIdAndStatus(userId, UserStatus.REGISTER);
+
+        if (optionalUserEntity.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        var entity = optionalUserEntity.get();
+
+        entity.setProfileUrl(path);
+
+        userRepository.save(entity);
     }
 }
