@@ -1,9 +1,7 @@
 package com.example.word.common.domain.user.model;
 
-import com.example.word.common.domain.statistics.model.StatisticsDTO;
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.example.word.common.domain.user.model.enums.UserStatus;
-import com.example.word.common.domain.word.model.WordDTO;
 import com.example.word.common.domain.word.model.WordEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
