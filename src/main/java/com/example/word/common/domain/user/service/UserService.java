@@ -8,6 +8,7 @@ import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
 import com.example.word.common.utils.image.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +24,8 @@ public class UserService {
 
     private final ImageService imageService;
 
+    private final PasswordEncoder passwordEncoder;
+
 
     // 로그인
     public UserEntity login(String userId, String password) {
@@ -35,7 +38,7 @@ public class UserService {
 
         var userEntity = user.get();
 
-        if (!userEntity.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, userEntity.getPassword())) {
             throw new ApiException(UserErrorCode.LOGIN_FAILED, "아이디 혹은 비밀번호가 틀립니다.");
         }
 
@@ -68,10 +71,9 @@ public class UserService {
             throw new ApiException(UserErrorCode.UNREGISTER_USER, "탈퇴한 회원입니다.");
         }
 
-        // TODO 비밀번호 암호화
         var userEntity = UserEntity.builder()
                 .userId(userId)
-                .password(password)
+                .password(passwordEncoder.encode(password))
                 .name(name)
                 .birthdate(birthdate)
                 .status(UserStatus.REGISTER)
@@ -111,8 +113,7 @@ public class UserService {
 
         var userEntity = optionalUserEntity.get();
 
-        // TODO 암호화로 변경 시 변경해야함
-        if (!userEntity.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, userEntity.getPassword())) {
             throw new ApiException(UserErrorCode.LOGIN_FAILED, "회원 정보 인증 실패");
         }
 
