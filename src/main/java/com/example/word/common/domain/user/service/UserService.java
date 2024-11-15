@@ -1,7 +1,7 @@
 package com.example.word.common.domain.user.service;
 
-import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.user.db.UserRepository;
+import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.user.model.enums.UserStatus;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.UserErrorCode;

@@ -2,10 +2,11 @@ package com.example.word.common.domain.word.model;
 
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.example.word.common.domain.user.model.UserEntity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,9 @@ public class WordEntity {
 
     @Column(name = "added_date")
     private LocalDateTime addedDate;
+
+    @Column(name = "memo")
+    private String memo;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

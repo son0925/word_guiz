@@ -5,12 +5,11 @@ import com.example.word.common.api.Api;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.word.business.WordBusiness;
 import com.example.word.common.domain.word.model.WordDeleteRequest;
-import com.example.word.common.domain.word.model.WordSaveRequest;
 import com.example.word.common.domain.word.model.WordResponse;
+import com.example.word.common.domain.word.model.WordSaveRequest;
 import com.example.word.common.domain.word.model.WordUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +35,7 @@ public class WordController {
 
     @PutMapping("/update")
     public Api<WordResponse> wordUpdate(
+            @Valid
             @RequestBody
             Api<WordUpdateRequest> wordRequest,
             @UserSession User user

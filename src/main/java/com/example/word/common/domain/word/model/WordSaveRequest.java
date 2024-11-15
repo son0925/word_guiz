@@ -16,4 +16,6 @@ public class WordSaveRequest {
     @NotBlank
     private String mean;
 
+    private String memo;
+
 }

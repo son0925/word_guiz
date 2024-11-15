@@ -1,6 +1,7 @@
 package com.example.word.common.domain.word.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -10,13 +11,15 @@ import lombok.*;
 @ToString
 public class WordUpdateRequest {
 
-    @NotBlank
+    @NotNull(message = "wordId is required")
     private Long wordId;
 
-    @NotBlank
+    @NotBlank(message = "word is required")
     private String word;
 
-    @NotBlank
+    @NotBlank(message = "mean is required")
     private String mean;
 
+    private String memo;
 }
+

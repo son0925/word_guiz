@@ -1,8 +1,6 @@
 package com.example.word.common.domain.word.service;
 
-import com.example.word.common.domain.statistics.business.StatisticsBusiness;
 import com.example.word.common.domain.user.model.UserEntity;
-import com.example.word.common.domain.user.service.UserConverter;
 import com.example.word.common.domain.word.db.WordRepository;
 import com.example.word.common.domain.word.model.WordEntity;
 import com.example.word.common.error.WordErrorCode;
@@ -25,7 +23,7 @@ public class WordService {
     private final WordRepository wordRepository;
 
 
-    public WordEntity wordSave(String word, String mean, UserEntity user) {
+    public WordEntity wordSave(String word, String mean, UserEntity user, String memo) {
 
         var existsWord = wordRepository.findByWordAndUser(word, user);
 
@@ -37,6 +35,7 @@ public class WordService {
                 .word(word)
                 .mean(mean)
                 .addedDate(LocalDateTime.now())
+                .memo(memo)
                 .user(user)
                 .build()
                 ;
@@ -44,10 +43,11 @@ public class WordService {
         return wordRepository.save(wordEntity);
     }
 
-    public WordEntity updateWord(WordEntity wordEntity, String updateWord, String updateMean) {
+    public WordEntity updateWord(WordEntity wordEntity, String updateWord, String updateMean, String updateMemo) {
 
         wordEntity.setWord(updateWord);
         wordEntity.setMean(updateMean);
+        wordEntity.setMemo(updateMemo);
 
         return wordRepository.save(wordEntity);
 

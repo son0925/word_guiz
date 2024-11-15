@@ -21,4 +21,6 @@ public class WordResponse {
 
     private LocalDateTime addedDate;
 
+    private String memo;
+
 }

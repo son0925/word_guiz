@@ -1,7 +1,6 @@
 package com.example.word.common.domain.token.service;
 
 import com.example.word.common.domain.token.helper.JwtTokenHelper;
-import com.example.word.common.domain.token.ifs.TokenHelperIfs;
 import com.example.word.common.domain.token.model.TokenDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -9,8 +9,11 @@ import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.service.UserConverter;
+import com.example.word.common.domain.word.model.WordDeleteRequest;
+import com.example.word.common.domain.word.model.WordResponse;
+import com.example.word.common.domain.word.model.WordSaveRequest;
+import com.example.word.common.domain.word.model.WordUpdateRequest;
 import com.example.word.common.domain.word.service.WordConverter;
-import com.example.word.common.domain.word.model.*;
 import com.example.word.common.domain.word.service.WordService;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.UserErrorCode;
@@ -46,10 +49,11 @@ public class WordBusiness {
 
         var word = wordData.getWord();
         var mean = wordData.getMean();
+        var memo = wordData.getMemo();
 
         var userEntity = userBusiness.findByUserWithThrow(user);
 
-        var wordEntity = wordService.wordSave(word, mean, userEntity);
+        var wordEntity = wordService.wordSave(word, mean, userEntity, memo);
 
         statisticsBusiness.create(wordEntity, userEntity);
 
@@ -60,6 +64,7 @@ public class WordBusiness {
     public WordResponse updateWord(Api<WordUpdateRequest> wordRequest, User user) {
         var wordData = wordRequest.getBody();
 
+        System.out.println(wordData);
         if (Objects.isNull(wordData) || wordData.getWord() == null || wordData.getMean() == null || Objects.isNull(user)) {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
@@ -72,14 +77,16 @@ public class WordBusiness {
 
         var updateWord = wordData.getWord();
         var updateMean = wordData.getMean();
+        var updateMemo = wordData.getMemo();
 
         var optionalWord = wordService.getWordByWordId(wordData.getWordId());
+
 
         if (optionalWord.isEmpty()) {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
 
-        var updateWordEntity = wordService.updateWord(optionalWord.get(), updateWord, updateMean);
+        var updateWordEntity = wordService.updateWord(optionalWord.get(), updateWord, updateMean, updateMemo);
 
         statisticsBusiness.updateStatistics(updateWordEntity);
 
