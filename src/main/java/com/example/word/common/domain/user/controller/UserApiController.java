@@ -8,6 +8,9 @@ import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.model.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.python.core.PyFunction;
+import org.python.core.PyInteger;
+import org.python.util.PythonInterpreter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,5 +53,7 @@ public class UserApiController {
 
         return Api.OK("비밀번호가 성공적으로 변경되었습니다.");
     }
+
+
 
 }

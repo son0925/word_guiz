@@ -2,6 +2,7 @@ package com.example.word.common.domain.statistics.controller;
 
 import com.example.word.common.annotation.UserSession;
 import com.example.word.common.api.Api;
+import com.example.word.common.domain.python.PythonService;
 import com.example.word.common.domain.statistics.business.StatisticsBusiness;
 import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.statistics.model.StatisticsUpdateRequest;
@@ -9,6 +10,7 @@ import com.example.word.common.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -17,6 +19,8 @@ import java.util.List;
 public class StatisticsApiController {
 
     private final StatisticsBusiness statisticsBusiness;
+
+    private final PythonService pythonService;
 
     @GetMapping("/list")
     public Api<List<StatisticsResponse>> read(
@@ -34,6 +38,15 @@ public class StatisticsApiController {
     ) {
         statisticsBusiness.resultUpdate(user, req);
         return Api.OK("업데이트 완료");
+    }
+
+    @GetMapping("/getStatistics")
+    public Api<String> getGraph(
+            @UserSession User user
+    ) throws IOException {
+        var response = statisticsBusiness.getStatisticsList(user);
+
+        return Api.OK(response);
     }
 
 }

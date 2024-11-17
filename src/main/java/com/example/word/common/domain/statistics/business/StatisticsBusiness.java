@@ -1,6 +1,7 @@
 package com.example.word.common.domain.statistics.business;
 
 import com.example.word.common.annotation.Business;
+import com.example.word.common.domain.python.PythonService;
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.example.word.common.domain.statistics.model.StatisticsId;
 import com.example.word.common.domain.statistics.model.StatisticsResponse;
@@ -16,6 +17,7 @@ import com.example.word.common.error.ErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
 import java.util.List;
 
 @Business
@@ -29,6 +31,8 @@ public class StatisticsBusiness {
     private final UserBusiness userBusiness;
 
     private final UserConverter userConverter;
+
+    private final PythonService pythonService;
 
 
     public void create(WordEntity word, UserEntity user) {
@@ -83,4 +87,14 @@ public class StatisticsBusiness {
     }
 
 
+    public String getStatisticsList(User user) throws IOException {
+
+        var userEntity = userBusiness.findByUserWithThrow(user);
+
+        var statisticsList = statisticsService.getStatisticsList(userEntity.getUserId());
+
+        var output = pythonService.getGraph(statisticsList);
+
+        return output;
+    }
 }
