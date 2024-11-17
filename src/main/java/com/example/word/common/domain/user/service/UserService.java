@@ -1,6 +1,7 @@
 package com.example.word.common.domain.user.service;
 
 import com.example.word.common.domain.user.db.UserRepository;
+import com.example.word.common.domain.user.model.ChangePasswordRequest;
 import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.user.model.enums.UserStatus;
 import com.example.word.common.error.ErrorCode;
@@ -29,14 +30,7 @@ public class UserService {
 
     // 로그인
     public UserEntity login(String userId, String password) {
-
-        var user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new ApiException(UserErrorCode.LOGIN_FAILED, "아이디 혹은 비밀번호가 틀립니다.");
-        }
-
-        var userEntity = user.get();
+        var userEntity = findByIdWithThrow(userId);
 
         if (!passwordEncoder.matches(password, userEntity.getPassword())) {
             throw new ApiException(UserErrorCode.LOGIN_FAILED, "아이디 혹은 비밀번호가 틀립니다.");
@@ -83,16 +77,7 @@ public class UserService {
     }
 
 
-    public UserEntity findByUserIdWithThrow(String userId) {
 
-        var userEntity = userRepository.findByUserIdAndStatus(userId, UserStatus.REGISTER);
-
-        return Optional.of(userEntity)
-                .map(it -> {
-                    return userEntity.get();
-                }).orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
-
-    }
 
     // 아이디 중복 여부 확인하기
     public String existentUserWithThrow(String userId) {
@@ -105,18 +90,15 @@ public class UserService {
 
     // 휴먼 계정 활성화하기
     public UserEntity accountActivation(String userId, String password) {
-        var optionalUserEntity = userRepository.findById(userId);
 
-        if (optionalUserEntity.isEmpty()) {
-            throw new ApiException(ErrorCode.NULL_POINT);
-        }
+        var userEntity = findByIdWithThrow(userId);
 
-        var userEntity = optionalUserEntity.get();
-
+        // 비밀번호가 맞지 않을 때
         if (!passwordEncoder.matches(password, userEntity.getPassword())) {
             throw new ApiException(UserErrorCode.LOGIN_FAILED, "회원 정보 인증 실패");
         }
 
+        // 휴먼 계정 상태가 아닐 때
         if (userEntity.getStatus().equals(UserStatus.REGISTER)) {
             throw new ApiException(ErrorCode.BAD_REQUEST);
         }
@@ -126,19 +108,46 @@ public class UserService {
         return userRepository.save(userEntity);
     }
 
+    // 프로필 사진 저장하기
     public void saveProfileUrl(MultipartFile image, String userId) throws IOException {
         var path = imageService.saveImage(image);
 
-        var optionalUserEntity = userRepository.findByUserIdAndStatus(userId, UserStatus.REGISTER);
+        var userEntity = findByIdWithThrow(userId);
+        userEntity.setProfileUrl(path);
 
-        if (optionalUserEntity.isEmpty()) {
-            throw new ApiException(ErrorCode.NULL_POINT);
+        userRepository.save(userEntity);
+    }
+
+    // 비밀번호 변경하기
+    public UserEntity changePassword(String userId, ChangePasswordRequest data) {
+
+        var userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
+
+        var curPassword = data.getCurrentPassword();
+        // 현재 비밀번호 정보를 잘 입력했는가
+        if (!passwordEncoder.matches(curPassword, userEntity.getPassword())) {
+            throw new ApiException(ErrorCode.BAD_REQUEST, "현재 비밀번호가 맞지 않습니다.");
         }
 
-        var entity = optionalUserEntity.get();
+        // TODO 비밀번호 양식이 올바른지
 
-        entity.setProfileUrl(path);
 
-        userRepository.save(entity);
+        var changePassword = data.getChangePassword();
+        userEntity.setPassword(passwordEncoder.encode(changePassword));
+
+        // 저장하기
+        return userRepository.save(userEntity);
+    }
+
+
+    public UserEntity findByIdWithThrow(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT, "사용자를 찾을 수 없습니다."));
+    }
+
+    public UserEntity findByIdAndStatusWithThrow(String userId, UserStatus status) {
+        return userRepository.findByUserIdAndStatus(userId, status)
+                .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT, "사용자를 찾을 수 없습니다."));
     }
 }

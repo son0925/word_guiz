@@ -58,7 +58,6 @@ public class UserBusiness {
         var password = user.getPassword();
         var name = user.getName();
 
-        System.out.println(user.getBirthdate());
         var birthdate = userConverter.convertToLocalDateTime(user.getBirthdate());
 
         var userEntity = userService.register(userId, password, name, birthdate);
@@ -74,6 +73,7 @@ public class UserBusiness {
         }
 
         return userService.existentUserWithThrow(userId);
+
     }
 
 
@@ -90,23 +90,26 @@ public class UserBusiness {
         var response = userService.accountActivation(userId, password);
 
         return userConverter.toResponse(response);
+
     }
 
     public UserEntity findByUserWithThrow(User user) {
+
         if (Objects.isNull(user) || user.getUserId() == null) {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
 
         var userId = user.getUserId();
 
-        return userService.findByUserIdWithThrow(userId);
+        return userService.findByIdWithThrow(userId);
+
     }
 
     public UserResponse info(User user) {
 
         var userId = user.getUserId();
 
-        var entity = userService.findByUserIdWithThrow(userId);
+        var entity = userService.findByIdWithThrow(userId);
 
         return userConverter.toResponse(entity);
 
@@ -117,5 +120,17 @@ public class UserBusiness {
         var userId = user.getUserId();
 
         userService.saveProfileUrl(image, userId);
+    }
+
+
+    public UserResponse changePassword(Api<ChangePasswordRequest> req, User user) {
+
+        var data = req.getBody();
+
+        var userId = user.getUserId();
+
+        var saveEntity = userService.changePassword(userId, data);
+
+        return userConverter.toResponse(saveEntity);
     }
 }

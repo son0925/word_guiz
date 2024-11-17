@@ -43,7 +43,7 @@ public class UserSessionResolver implements HandlerMethodArgumentResolver {
         var userId = requestContext.getAttribute("userId", RequestAttributes.SCOPE_REQUEST);
 
         assert userId != null;
-        var userEntity = userService.findByUserIdWithThrow(userId.toString());
+        var userEntity = userService.findByIdWithThrow(userId.toString());
 
         // 사용자 정보 세팅
         return User.builder()

@@ -3,8 +3,10 @@ package com.example.word.common.domain.user.controller;
 import com.example.word.common.annotation.UserSession;
 import com.example.word.common.api.Api;
 import com.example.word.common.domain.user.business.UserBusiness;
+import com.example.word.common.domain.user.model.ChangePasswordRequest;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.model.UserResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,17 @@ public class UserApiController {
             @UserSession User user
     ) throws IOException {
         userBusiness.saveProfileUrl(image, user);
-        return Api.OK("프로필이 저장되었습니다.");
+        return Api.OK("");
     }
+
+    @PostMapping("/change-password")
+    public Api<String> passwordChange(
+            @UserSession User user,
+            @RequestBody @Valid Api<ChangePasswordRequest> req
+    ) {
+        userBusiness.changePassword(req, user);
+
+        return Api.OK("비밀번호가 성공적으로 변경되었습니다.");
+    }
+
 }

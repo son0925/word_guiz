@@ -6,6 +6,8 @@ import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.LoginRequest;
 import com.example.word.common.domain.user.model.UserRegisterRequest;
 import com.example.word.common.domain.user.model.UserResponse;
+import com.example.word.common.error.ErrorCode;
+import com.example.word.common.exception.ApiException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
