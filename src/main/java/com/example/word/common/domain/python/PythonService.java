@@ -1,9 +1,9 @@
+
 package com.example.word.common.domain.python;
 
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.python.core.*;
 import org.python.util.PythonInterpreter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ public class PythonService {
 
     @Value("${python.script.path}")
     private String pythonScriptPath;
+    private final ProcessBuilder processBuilder;
 
 
     public String getGraph(List<StatisticsEntity> statisticsList) throws IOException {
@@ -35,8 +36,6 @@ public class PythonService {
 
 
         // ProcessBuilder로 Python 스크립트 실행
-        ProcessBuilder processBuilder = new ProcessBuilder("python", pythonScriptPath);
-        processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
 
         // 파이썬 스크립트가 결과를 저장할 파일을 읽고 반환

@@ -10,8 +10,8 @@ import java.util.Properties;
 @Configuration
 public class PythonConfig {
 
-    @Value("${python.libs.path")
-    private String pythonLibsPath;
+    @Value("${python.script.path")
+    private String pythonScriptPath;
 
     @Bean
     public PythonInterpreter pythonInterpreter() {
@@ -24,9 +24,17 @@ public class PythonConfig {
 
         // sys.path 수정하여 Python 라이브러리 경로 추가
         interpreter.exec("import sys");
-        interpreter.exec("sys.path.append('" + pythonLibsPath + "')");
+        interpreter.exec("sys.path.append('" + pythonScriptPath + "')");
 
         return interpreter;
+    }
+
+
+    @Bean
+    public ProcessBuilder processBuilder() {
+        var processBuilder = new ProcessBuilder("python", pythonScriptPath);
+        processBuilder.redirectErrorStream(true);
+        return processBuilder;
     }
 
 }
