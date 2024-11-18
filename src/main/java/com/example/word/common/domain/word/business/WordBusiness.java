@@ -3,6 +3,7 @@ package com.example.word.common.domain.word.business;
 import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
 import com.example.word.common.api.Pagination;
+import com.example.word.common.domain.fetchify.naver.business.NaverOpenApiBusiness;
 import com.example.word.common.domain.statistics.business.StatisticsBusiness;
 import com.example.word.common.domain.statistics.model.StatisticsId;
 import com.example.word.common.domain.statistics.model.StatisticsResponse;
@@ -38,10 +39,9 @@ public class WordBusiness {
 
     private final StatisticsBusiness statisticsBusiness;
 
-    @Value("${x.naver.client.id}")
-    private String clientId;
-    @Value("${x.naver.client.secret}")
-    private String clientSecret;
+    private final NaverOpenApiBusiness naverOpenApiBusiness;
+
+
 
     @Transactional
     public WordResponse saveWord(Api<WordSaveRequest> wordRequest, User user) {
@@ -163,32 +163,9 @@ public class WordBusiness {
 
 
     public List<DictionaryResponse> searchDictionary(String word) {
-        // 네이버 API URL
-        String url = "https://openapi.naver.com/v1/search/webkr.json?query=" + word + "뜻&display="+3;
+        var response = naverOpenApiBusiness.searchDictionary(word);
 
-        // 헤더 설정 (Client ID와 Secret 포함)
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Naver-Client-Id", clientId);
-        headers.set("X-Naver-Client-Secret", clientSecret);
-
-        // 요청 생성
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        // RestTemplate로 요청 보내기
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<NaverApiResponse> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                NaverApiResponse.class
-        );
-
-        // 응답 처리
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return wordConverter.convertToDictionaryResponse(response.getBody());
-        } else {
-            throw new RuntimeException("네이버 API 요청 실패: " + response.getStatusCode());
-        }
+        return wordConverter.convertToDictionaryResponse(response);
     }
 
 
