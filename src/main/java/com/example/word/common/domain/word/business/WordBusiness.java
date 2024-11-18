@@ -9,19 +9,20 @@ import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.service.UserConverter;
-import com.example.word.common.domain.word.model.WordDeleteRequest;
-import com.example.word.common.domain.word.model.WordResponse;
-import com.example.word.common.domain.word.model.WordSaveRequest;
-import com.example.word.common.domain.word.model.WordUpdateRequest;
+import com.example.word.common.domain.word.model.*;
 import com.example.word.common.domain.word.service.WordConverter;
 import com.example.word.common.domain.word.service.WordService;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +38,10 @@ public class WordBusiness {
 
     private final StatisticsBusiness statisticsBusiness;
 
+    @Value("${x.naver.client.id}")
+    private String clientId;
+    @Value("${x.naver.client.secret}")
+    private String clientSecret;
 
     @Transactional
     public WordResponse saveWord(Api<WordSaveRequest> wordRequest, User user) {
@@ -154,6 +159,36 @@ public class WordBusiness {
         return wordService.getWordList(wordIdList).stream()
                 .map(wordConverter::toResponse)
                 .toList();
+    }
+
+
+    public List<DictionaryResponse> searchDictionary(String word) {
+        // 네이버 API URL
+        String url = "https://openapi.naver.com/v1/search/webkr.json?query=" + word + "뜻&display="+3;
+
+        // 헤더 설정 (Client ID와 Secret 포함)
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Naver-Client-Id", clientId);
+        headers.set("X-Naver-Client-Secret", clientSecret);
+
+        // 요청 생성
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        // RestTemplate로 요청 보내기
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<NaverApiResponse> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                NaverApiResponse.class
+        );
+
+        // 응답 처리
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return wordConverter.convertToDictionaryResponse(response.getBody());
+        } else {
+            throw new RuntimeException("네이버 API 요청 실패: " + response.getStatusCode());
+        }
     }
 
 

@@ -4,10 +4,7 @@ import com.example.word.common.annotation.UserSession;
 import com.example.word.common.api.Api;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.word.business.WordBusiness;
-import com.example.word.common.domain.word.model.WordDeleteRequest;
-import com.example.word.common.domain.word.model.WordResponse;
-import com.example.word.common.domain.word.model.WordSaveRequest;
-import com.example.word.common.domain.word.model.WordUpdateRequest;
+import com.example.word.common.domain.word.model.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -73,5 +70,15 @@ public class WordController {
             @RequestParam int size
     ) {
         return Api.OK(wordBusiness.getWordQuizList(user, size));
+    }
+
+    @PostMapping("/search-dictionary")
+    public Api<List<DictionaryResponse>> getDictionaryList(
+            @RequestParam String word
+    ) {
+        var response = wordBusiness.searchDictionary(word);
+
+
+        return Api.OK(response);
     }
 }
