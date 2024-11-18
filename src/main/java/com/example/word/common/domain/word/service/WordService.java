@@ -54,7 +54,7 @@ public class WordService {
     }
 
 
-    public Page<WordEntity> getWordList(String userId, Pageable pageable, String sortBy, String order) {
+    public Page<WordEntity> getWordList(String userId, Pageable pageable, String sortBy, String order, String searchWord) {
 
         Sort sort = Sort.by(Sort.Order.desc(sortBy));
         if ("asc".equalsIgnoreCase(order)) {
@@ -63,7 +63,7 @@ public class WordService {
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        return wordRepository.findAllByUser_UserId(userId, sortedPageable);
+        return wordRepository.findAllByUser_UserIdAndWordStartingWith(userId,searchWord, sortedPageable);
     }
 
     public void deleteWord(Long wordId, String userId) {

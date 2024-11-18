@@ -99,14 +99,14 @@ public class WordBusiness {
     }
 
 
-    public Api<List<WordResponse>> getWordList(User user, Pageable pageable, String sortBy, String order) {
+    public Api<List<WordResponse>> getWordList(User user, Pageable pageable, String sortBy, String order, String searchWord) {
         if (Objects.isNull(user)) {
             throw new ApiException(ErrorCode.SERVER_ERROR);
         }
 
         var userId = user.getUserId();
 
-        var wordPage = wordService.getWordList(userId, pageable, sortBy, order);
+        var wordPage = wordService.getWordList(userId, pageable, sortBy, order, searchWord);
 
         var wordResponses = wordPage.getContent().stream()
                 .map(wordConverter::toResponse)

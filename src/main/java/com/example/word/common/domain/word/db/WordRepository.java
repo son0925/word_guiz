@@ -17,7 +17,7 @@ public interface WordRepository extends JpaRepository<WordEntity, Long> {
     // 특정 유저의 특정 단어가 존재하는지(단어 추가시)
     Optional<WordEntity> findByWordAndUser(String word, UserEntity user);
 
-    Page<WordEntity> findAllByUser_UserId(String userId, Pageable pageable);
+    Page<WordEntity> findAllByUser_UserIdAndWordStartingWith(String userId, String searchWord, Pageable pageable);
 
     List<WordEntity> findByWordIdIn(List<Long> wordIdList);
 

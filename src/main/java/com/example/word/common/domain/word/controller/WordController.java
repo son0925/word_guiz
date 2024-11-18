@@ -46,9 +46,11 @@ public class WordController {
             @UserSession User user,
             @RequestParam(defaultValue = "word") String sortBy,
             @RequestParam(defaultValue = "asc") String order,
+            @RequestParam(defaultValue = "") String searchWord,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        return wordBusiness.getWordList(user, pageable, sortBy, order);
+        System.out.println(searchWord);
+        return wordBusiness.getWordList(user, pageable, sortBy, order, searchWord);
     }
 
 
