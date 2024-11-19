@@ -5,6 +5,7 @@ import com.example.word.common.api.Api;
 import com.example.word.common.domain.token.business.TokenBusiness;
 import com.example.word.common.domain.token.model.TokenResponse;
 import com.example.word.common.domain.user.model.*;
+import com.example.word.common.domain.user.model.enums.UserStatus;
 import com.example.word.common.domain.user.service.UserConverter;
 import com.example.word.common.domain.user.service.UserService;
 import com.example.word.common.error.ErrorCode;
@@ -132,5 +133,12 @@ public class UserBusiness {
         var saveEntity = userService.changePassword(userId, data);
 
         return userConverter.toResponse(saveEntity);
+    }
+
+    public void deleteUser(User user) {
+
+        var userEntity = userService.findByIdWithThrow(user.getUserId());
+
+        userEntity.setStatus(UserStatus.UNREGISTER);
     }
 }

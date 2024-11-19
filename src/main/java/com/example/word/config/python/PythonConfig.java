@@ -32,7 +32,7 @@ public class PythonConfig {
 
     @Bean
     public ProcessBuilder processBuilder() {
-        var processBuilder = new ProcessBuilder("python", pythonScriptPath);
+        var processBuilder = new ProcessBuilder("python", pythonScriptPath + "path_to_script.py");
         processBuilder.redirectErrorStream(true);
         return processBuilder;
     }

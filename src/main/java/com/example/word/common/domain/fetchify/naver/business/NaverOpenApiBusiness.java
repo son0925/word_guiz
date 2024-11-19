@@ -15,9 +15,6 @@ public class NaverOpenApiBusiness {
 
     private final NaverOpenApiService naverOpenApiService;
 
-    private final WordConverter wordConverter;
-
-
     public NaverApiResponse searchDictionary(String word) {
 
         return naverOpenApiService.searchDictionary(word);

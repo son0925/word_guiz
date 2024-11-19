@@ -20,6 +20,7 @@ public class SecurityConfig {
         httpSecurity
                 .httpBasic(AbstractHttpConfigurer::disable) // 브라우저 로그인 팝업 비활성화
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+                .authorizeHttpRequests(it -> it.requestMatchers("/**").permitAll())
                 .formLogin(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }

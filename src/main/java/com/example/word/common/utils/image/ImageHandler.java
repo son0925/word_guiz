@@ -9,7 +9,7 @@ import java.io.IOException;
 @Component
 public class ImageHandler {
 
-    private static final String IMAGE_DIRECTORY = "C:\\MyWordProject\\word\\word\\src\\main\\resources\\static\\images\\";
+    private static final String IMAGE_DIRECTORY = "C:\\project\\word_guiz\\src\\main\\resources\\public\\images\\";
 
     public String save(MultipartFile image) throws IOException {
         String fileName = image.getOriginalFilename();
@@ -21,7 +21,7 @@ public class ImageHandler {
         image.transferTo(file);
 
         // 클라이언트가 접근할 수 있도록 URL 형태로 반환
-        return "http://localhost:8080/images/" + fileName;
+        return "http://my-word-book.kro.kr:8080/public/images/" + fileName;
     }
 
 }

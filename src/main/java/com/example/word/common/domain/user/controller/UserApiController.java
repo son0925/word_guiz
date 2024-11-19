@@ -54,6 +54,12 @@ public class UserApiController {
         return Api.OK("비밀번호가 성공적으로 변경되었습니다.");
     }
 
-
+    @DeleteMapping("/delete")
+    public Api<String> deleteUser(
+            @UserSession User user
+    ) {
+        userBusiness.deleteUser(user);
+        return Api.OK("회원이 비활성화 되었습니다.");
+    }
 
 }

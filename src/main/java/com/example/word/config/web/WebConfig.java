@@ -67,7 +67,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:///C:/MyWordProject/word/word/src/main/resources/static/images/");
+        registry.addResourceHandler("/public/images/**")
+                .addResourceLocations("file:///C:/project/word_guiz/src/main/resources/public/images/")
+                .setCachePeriod(0); // 캐시 비활성화
     }
 }

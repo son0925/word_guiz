@@ -1,13 +1,11 @@
 package com.example.word.common.domain.fetchify.naver.service;
 
-import com.example.word.common.domain.word.model.DictionaryResponse;
 import com.example.word.common.domain.word.model.NaverApiResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 
 @Service
 public class NaverOpenApiService {

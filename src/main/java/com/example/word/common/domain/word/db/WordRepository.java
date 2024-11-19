@@ -23,4 +23,6 @@ public interface WordRepository extends JpaRepository<WordEntity, Long> {
 
     Optional<WordEntity> findByWordId(Long wordId);
 
+    boolean existsByWordAndUser(String word, UserEntity user);
+
 }

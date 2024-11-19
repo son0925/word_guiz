@@ -11,7 +11,6 @@ import com.example.word.common.domain.statistics.service.StatisticsService;
 import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.model.UserEntity;
-import com.example.word.common.domain.user.service.UserConverter;
 import com.example.word.common.domain.word.model.WordEntity;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.exception.ApiException;
@@ -29,8 +28,6 @@ public class StatisticsBusiness {
     private final StatisticsConverter statisticsConverter;
 
     private final UserBusiness userBusiness;
-
-    private final UserConverter userConverter;
 
     private final PythonService pythonService;
 

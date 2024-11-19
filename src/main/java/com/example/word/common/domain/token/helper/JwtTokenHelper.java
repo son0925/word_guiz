@@ -88,9 +88,7 @@ public class JwtTokenHelper implements TokenHelperIfs {
 
         var parser = Jwts.parserBuilder()
                 .setSigningKey(key)
-                .build()
-                ;
-
+                .build();
 
         try {
             var result = parser.parseClaimsJws(token);

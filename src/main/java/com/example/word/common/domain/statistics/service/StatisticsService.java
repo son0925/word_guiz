@@ -117,7 +117,7 @@ public class StatisticsService {
 
         // 20번 연속으로 퀴즈를 하지 않은 단어
         statisticsList.stream()
-                .filter(it -> it.getNoQuizCount() >= 20)
+                .filter(it -> it.getNoQuizCount() >= 5)
                 .filter(it -> !wordQuizList.contains(it))  // 이미 포함된 단어는 제외
                 .forEach(wordQuizList::add);
 
@@ -178,6 +178,7 @@ public class StatisticsService {
             entity.setCorrectAnswerCount(entity.getCorrectAnswerCount() + 1);
         }
         entity.setTotalQuizCount(entity.getTotalQuizCount() + 1);
+        entity.setNoQuizCount(0);
 
         statisticsRepository.save(entity);
     }

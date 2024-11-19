@@ -69,7 +69,6 @@ public class WordBusiness {
     public WordResponse updateWord(Api<WordUpdateRequest> wordRequest, User user) {
         var wordData = wordRequest.getBody();
 
-        System.out.println(wordData);
         if (Objects.isNull(wordData) || wordData.getWord() == null || wordData.getMean() == null || Objects.isNull(user)) {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
@@ -80,10 +79,6 @@ public class WordBusiness {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
 
-        var updateWord = wordData.getWord();
-        var updateMean = wordData.getMean();
-        var updateMemo = wordData.getMemo();
-
         var optionalWord = wordService.getWordByWordId(wordData.getWordId());
 
 
@@ -91,7 +86,7 @@ public class WordBusiness {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
 
-        var updateWordEntity = wordService.updateWord(optionalWord.get(), updateWord, updateMean, updateMemo);
+        var updateWordEntity = wordService.updateWord(optionalWord.get(), wordData, user);
 
         statisticsBusiness.updateStatistics(updateWordEntity);
 

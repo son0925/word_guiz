@@ -1,8 +1,11 @@
 package com.example.word.common.domain.word.service;
 
+import com.example.word.common.domain.user.business.UserBusiness;
+import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.word.db.WordRepository;
 import com.example.word.common.domain.word.model.WordEntity;
+import com.example.word.common.domain.word.model.WordUpdateRequest;
 import com.example.word.common.error.WordErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,8 @@ import java.util.Optional;
 public class WordService {
 
     private final WordRepository wordRepository;
+
+    private final UserBusiness userBusiness;
 
 
     public WordEntity wordSave(String word, String mean, UserEntity user, String memo) {
@@ -43,11 +48,19 @@ public class WordService {
         return wordRepository.save(wordEntity);
     }
 
-    public WordEntity updateWord(WordEntity wordEntity, String updateWord, String updateMean, String updateMemo) {
+    public WordEntity updateWord(WordEntity wordEntity, WordUpdateRequest word, User user) {
 
-        wordEntity.setWord(updateWord);
-        wordEntity.setMean(updateMean);
-        wordEntity.setMemo(updateMemo);
+        var userEntity = userBusiness.findByUserWithThrow(user);
+
+        var exists = wordRepository.existsByWordAndUser(word.getWord(), userEntity);
+
+        if (exists) {
+            throw new ApiException(WordErrorCode.EXISTS_WORD);
+        }
+
+        wordEntity.setWord(word.getWord());
+        wordEntity.setMean(word.getMean());
+        wordEntity.setMemo(word.getMemo());
 
         return wordRepository.save(wordEntity);
 
