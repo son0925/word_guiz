@@ -1,7 +1,8 @@
 package com.example.word.common.domain.token.service;
 
 import com.example.word.common.domain.token.helper.JwtTokenHelper;
-import com.example.word.common.domain.token.model.TokenDto;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,27 +15,31 @@ public class TokenService {
     private final JwtTokenHelper jwtTokenHelper;
 
 
-    public TokenDto getAccessToken(String id) {
-        var data = new HashMap<String, Object>();
-        data.put("userId", id);
-
-        return jwtTokenHelper.issueAccessToken(data);
+    public String getAccessToken(String id) {
+        return jwtTokenHelper.createAccessToken(id);
     }
 
-    public TokenDto getRefreshToken(String id) {
-        var data = new HashMap<String,Object>();
-        data.put("userId", id);
-
-        return jwtTokenHelper.issueRefreshToken(data);
+    public String getRefreshToken(String id) {
+        return jwtTokenHelper.createRefreshToken(id);
     }
 
+    public String getUserId(String token) {
+        return jwtTokenHelper.getUserIdFromToken(token);
+    }
 
-    public String validationToken(String token) {
-        var map = jwtTokenHelper.validationTokenWithThrow(token);
+    public boolean validationToken(String token) {
+        return jwtTokenHelper.validateToken(token);
+    }
 
-        var userId = map.get("userId");
-
-        return userId.toString();
+    public String getTokenFromCookie(HttpServletRequest request, String cookieName) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(cookieName)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
 }

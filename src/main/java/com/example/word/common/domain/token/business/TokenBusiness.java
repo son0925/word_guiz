@@ -1,15 +1,11 @@
 package com.example.word.common.domain.token.business;
 
 import com.example.word.common.annotation.Business;
-import com.example.word.common.domain.token.model.TokenResponse;
-import com.example.word.common.domain.token.service.TokenConverter;
 import com.example.word.common.domain.token.service.TokenService;
-import com.example.word.common.domain.user.model.UserEntity;
-import com.example.word.common.error.ErrorCode;
-import com.example.word.common.exception.ApiException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
 
 @Business
 @RequiredArgsConstructor
@@ -17,28 +13,43 @@ public class TokenBusiness {
 
     private final TokenService tokenService;
 
-    private final TokenConverter tokenConverter;
 
+    public String createAccessToken(String userId) {
+        return tokenService.getAccessToken(userId);
+    }
 
-    public TokenResponse issueToken(UserEntity userEntity) {
-        return Optional.ofNullable(userEntity)
-                .map(it -> {
-                    var userId = it.getUserId();
+    public String createRefreshToken(String userId) {
+        return tokenService.getRefreshToken(userId);
+    }
 
-                    var accessToken = tokenService.getAccessToken(userId);
-                    var refreshToken = tokenService.getRefreshToken(userId);
-
-                    return tokenConverter.toResponse(accessToken, refreshToken);
-                })
-                .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT))
-                ;
+    public String getUserIdFromToken(String token) {
+        return tokenService.getUserId(token);
     }
 
 
-    public String validationAccessToken(String token) {
-
+    public boolean validationToken(String token) {
         return tokenService.validationToken(token);
     }
 
+    public String getTokenFromCookie(HttpServletRequest request, String cookieName) {
+        return tokenService.getTokenFromCookie(request, cookieName);
+    }
 
+    public void cookieSettingToken(String userId, HttpServletResponse response) {
+        var accessToken = createAccessToken(userId);
+        var refreshToken = createRefreshToken(userId);
+
+        var accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(60 * 15); // 15분 accessToken
+
+        var refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60); // 1시간 refreshToken
+
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
+    }
 }

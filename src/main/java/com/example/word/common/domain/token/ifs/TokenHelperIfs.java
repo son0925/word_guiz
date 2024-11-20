@@ -1,16 +1,12 @@
 package com.example.word.common.domain.token.ifs;
 
 
-import com.example.word.common.domain.token.model.TokenDto;
-
-import java.util.Map;
-
 public interface TokenHelperIfs {
 
-    TokenDto issueAccessToken(Map<String,Object> data);
+    String createAccessToken(String userId);
 
-    TokenDto issueRefreshToken(Map<String,Object> data);
+    String createRefreshToken(String userId);
 
-    Map<String,Object> validationTokenWithThrow(String token);
+    boolean validateToken(String token);
 
 }

@@ -7,6 +7,7 @@ import com.example.word.common.domain.word.business.WordBusiness;
 import com.example.word.common.domain.word.model.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,6 @@ public class WordController {
             @RequestParam(defaultValue = "") String searchWord,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        System.out.println(searchWord);
         return wordBusiness.getWordList(user, pageable, sortBy, order, searchWord);
     }
 

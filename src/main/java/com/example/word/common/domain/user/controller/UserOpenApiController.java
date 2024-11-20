@@ -1,13 +1,11 @@
 package com.example.word.common.domain.user.controller;
 
 import com.example.word.common.api.Api;
-import com.example.word.common.domain.token.model.TokenResponse;
 import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.LoginRequest;
 import com.example.word.common.domain.user.model.UserRegisterRequest;
 import com.example.word.common.domain.user.model.UserResponse;
-import com.example.word.common.error.ErrorCode;
-import com.example.word.common.exception.ApiException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,12 +22,13 @@ public class UserOpenApiController {
 
     // 로그인
     @PostMapping("/login")
-    public Api<TokenResponse> login(
+    public Api<UserResponse> login(
             @Valid
             @RequestBody
-            Api<LoginRequest> user
+            Api<LoginRequest> user,
+            HttpServletResponse response
     ) {
-        return Api.OK(userBusiness.login(user));
+        return Api.OK(userBusiness.login(user, response));
     }
 
     // 회원가입

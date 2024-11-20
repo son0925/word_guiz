@@ -3,13 +3,13 @@ package com.example.word.common.domain.user.business;
 import com.example.word.common.annotation.Business;
 import com.example.word.common.api.Api;
 import com.example.word.common.domain.token.business.TokenBusiness;
-import com.example.word.common.domain.token.model.TokenResponse;
 import com.example.word.common.domain.user.model.*;
 import com.example.word.common.domain.user.model.enums.UserStatus;
 import com.example.word.common.domain.user.service.UserConverter;
 import com.example.word.common.domain.user.service.UserService;
 import com.example.word.common.error.ErrorCode;
 import com.example.word.common.exception.ApiException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +28,7 @@ public class UserBusiness {
 
 
     // 유저 로그인
-    public TokenResponse login(Api<LoginRequest> req) {
+    public UserResponse login(Api<LoginRequest> req, HttpServletResponse response) {
 
         var user = req.getBody();
 
@@ -42,8 +42,10 @@ public class UserBusiness {
 
         var userEntity = userService.login(userId, password);
 
-        // TODO Cookie 저장하기
-        return tokenBusiness.issueToken(userEntity);
+
+        tokenBusiness.cookieSettingToken(userId, response);
+
+        return userConverter.toResponse(userEntity);
     }
 
     // 유저 회원가입

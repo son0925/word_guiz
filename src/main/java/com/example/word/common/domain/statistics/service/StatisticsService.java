@@ -34,6 +34,7 @@ public class StatisticsService {
 
 
         // 이미 저장된 단어라면 Error 처리
+        // TODO 하지만 메모 혹은 뜻을 고칠 땐 예외로 처리하기
         if (statisticsRepository.existsById(id)) {
             throw new ApiException(StatisticsErrorCode.SAVE_FAILED);
         }
@@ -115,9 +116,11 @@ public class StatisticsService {
             return wordQuizList.subList(0, size);
         }
 
+        int count = Math.max(statisticsList.size() / 10, 5);
+
         // 20번 연속으로 퀴즈를 하지 않은 단어
         statisticsList.stream()
-                .filter(it -> it.getNoQuizCount() >= 5)
+                .filter(it -> it.getNoQuizCount() >= count)
                 .filter(it -> !wordQuizList.contains(it))  // 이미 포함된 단어는 제외
                 .forEach(wordQuizList::add);
 
