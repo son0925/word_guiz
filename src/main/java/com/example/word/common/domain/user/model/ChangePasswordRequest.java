@@ -1,5 +1,6 @@
 package com.example.word.common.domain.user.model;
 
+import com.example.word.common.annotation.Password;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChangePasswordRequest {
 
-    @NotBlank
+    @Password
     private String currentPassword;
 
-    @NotBlank
+    @Password
     private String changePassword;
 
 }

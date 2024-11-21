@@ -9,6 +9,7 @@ import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
 import com.example.word.common.utils.image.ImageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -130,12 +132,10 @@ public class UserService {
             throw new ApiException(ErrorCode.BAD_REQUEST, "현재 비밀번호가 맞지 않습니다.");
         }
 
-        // TODO 비밀번호 양식이 올바른지
-
-
         var changePassword = data.getChangePassword();
         userEntity.setPassword(passwordEncoder.encode(changePassword));
 
+        System.out.println(userEntity.getPassword());
         // 저장하기
         return userRepository.save(userEntity);
     }

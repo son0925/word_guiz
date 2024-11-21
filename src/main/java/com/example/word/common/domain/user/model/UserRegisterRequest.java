@@ -1,5 +1,7 @@
 package com.example.word.common.domain.user.model;
 
+import com.example.word.common.annotation.Password;
+import com.example.word.common.annotation.UserId;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -10,10 +12,10 @@ import lombok.*;
 @Builder
 public class UserRegisterRequest {
 
-    @NotBlank(message = "User ID는 필수입니다.")
+    @UserId
     private String userId;
 
-    @NotBlank(message = "Password는 필수입니다.")
+    @Password
     private String password;
 
     @NotBlank(message = "Name은 필수입니다.")
