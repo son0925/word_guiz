@@ -43,7 +43,7 @@ public class UserBusiness {
         var userEntity = userService.login(userId, password);
 
 
-        tokenBusiness.cookieSettingToken(userId, response);
+        tokenBusiness.cookieSettingToken(userId, response, 15, 60);
 
         return userConverter.toResponse(userEntity);
     }
@@ -142,5 +142,11 @@ public class UserBusiness {
         var userEntity = userService.findByIdWithThrow(user.getUserId());
 
         userEntity.setStatus(UserStatus.UNREGISTER);
+    }
+
+    public void logout(User user, HttpServletResponse response) {
+
+        tokenBusiness.cookieSettingToken(user.getUserId(), response, 0, 0);
+
     }
 }

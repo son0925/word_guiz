@@ -35,19 +35,19 @@ public class TokenBusiness {
         return tokenService.getTokenFromCookie(request, cookieName);
     }
 
-    public void cookieSettingToken(String userId, HttpServletResponse response) {
+    public void cookieSettingToken(String userId, HttpServletResponse response, int accessTime, int refreshTime) {
         var accessToken = createAccessToken(userId);
         var refreshToken = createRefreshToken(userId);
 
         var accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(60 * 15); // 15분 accessToken
+        accessTokenCookie.setMaxAge(60 * accessTime);
 
         var refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(60 * 60); // 1시간 refreshToken
+        refreshTokenCookie.setMaxAge(60 * refreshTime);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);

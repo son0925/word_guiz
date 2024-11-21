@@ -6,6 +6,7 @@ import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.ChangePasswordRequest;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.model.UserResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.python.core.PyFunction;
@@ -60,6 +61,17 @@ public class UserApiController {
     ) {
         userBusiness.deleteUser(user);
         return Api.OK("회원이 비활성화 되었습니다.");
+    }
+
+    @PostMapping("/logout")
+    public Api<String> logout(
+            @UserSession
+            User user,
+            HttpServletResponse response
+    ) {
+        userBusiness.logout(user, response);
+
+        return Api.OK("로그아웃 되었습니다.");
     }
 
 }
