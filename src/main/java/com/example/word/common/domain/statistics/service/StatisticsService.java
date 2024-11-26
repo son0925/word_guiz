@@ -151,6 +151,7 @@ public class StatisticsService {
 
         return wordQuizList;
     }
+    
 
 
     public void resultUpdate(String userId, List<StatisticsUpdateRequest> statisticsList) {
