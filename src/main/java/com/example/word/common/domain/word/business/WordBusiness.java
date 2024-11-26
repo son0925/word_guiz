@@ -21,7 +21,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,7 +70,7 @@ public class WordBusiness {
         var wordData = wordRequest.getBody();
 
         if (Objects.isNull(wordData) || wordData.getWord() == null || wordData.getMean() == null || Objects.isNull(user)) {
-            throw new ApiException(ErrorCode.NULL_POINT, "Word Business Null");
+            throw new ApiException(ErrorCode.NULL_POINT);
         }
 
         var optionalWordEntity = wordService.getWordByWordId(wordData.getWordId());
@@ -77,7 +79,14 @@ public class WordBusiness {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
 
-        var updateWordEntity = wordService.updateWord(optionalWordEntity.get(), wordData, user);
+        var optionalWord = wordService.getWordByWordId(wordData.getWordId());
+
+
+        if (optionalWord.isEmpty()) {
+            throw new ApiException(ErrorCode.NULL_POINT);
+        }
+
+        var updateWordEntity = wordService.updateWord(optionalWord.get(), wordData, user);
 
         statisticsBusiness.updateStatistics(updateWordEntity);
 

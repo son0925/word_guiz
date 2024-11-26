@@ -5,7 +5,6 @@ import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.example.word.common.domain.statistics.model.StatisticsId;
 import com.example.word.common.domain.statistics.model.StatisticsUpdateRequest;
 import com.example.word.common.domain.statistics.model.enums.StatisticsStatus;
-import com.example.word.common.domain.streaks.business.StreaksBusiness;
 import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.word.model.WordEntity;
 import com.example.word.common.error.ErrorCode;
@@ -24,8 +23,6 @@ import java.util.stream.Collectors;
 public class StatisticsService {
 
     private final StatisticsRepository statisticsRepository;
-
-    private final StreaksBusiness streaksBusiness;
 
 
     public void create(WordEntity word, UserEntity user) {
@@ -171,8 +168,6 @@ public class StatisticsService {
         noAnswerEntities.forEach(it -> {
             it.setNoQuizCount(it.getNoQuizCount() + 1);
         });
-
-        streaksBusiness.plantingGrass(userId);
 
         statisticsRepository.saveAll(noAnswerEntities);
     }

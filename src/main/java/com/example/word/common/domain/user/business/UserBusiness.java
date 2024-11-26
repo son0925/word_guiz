@@ -99,7 +99,7 @@ public class UserBusiness {
     public UserEntity findByUserWithThrow(User user) {
 
         if (Objects.isNull(user) || user.getUserId() == null) {
-            throw new ApiException(ErrorCode.NULL_POINT, "비지니스 영역 user 정보 null");
+            throw new ApiException(ErrorCode.NULL_POINT);
         }
 
         var userId = user.getUserId();
