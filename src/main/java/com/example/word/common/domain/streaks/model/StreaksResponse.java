@@ -18,5 +18,6 @@ public class StreaksResponse {
     private LocalDate date;
 
     private Integer problemsSolved;
+    
 
 }

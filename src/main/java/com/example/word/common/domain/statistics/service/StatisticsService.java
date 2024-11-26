@@ -149,6 +149,7 @@ public class StatisticsService {
         int remainingSize = size - wordQuizList.size();
         wordQuizList.addAll(sortList.subList(0, Math.min(remainingSize, sortList.size())));
 
+
         return wordQuizList;
     }
 
