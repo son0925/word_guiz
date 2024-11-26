@@ -54,7 +54,7 @@ public class WordController {
     }
 
 
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public Api<String> deleteWord(
             @Valid
             @RequestBody Api<WordDeleteRequest> word,

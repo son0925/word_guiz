@@ -8,10 +8,7 @@ import com.example.word.common.domain.user.model.UserResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,13 +35,19 @@ public class UserOpenApiController {
             @RequestBody
             Api<UserRegisterRequest> user
     ) {
-        return Api.OK(userBusiness.register(user));
+        var response = userBusiness.register(user);
+
+        return Api.OK(response);
     }
 
     // 아이디 중복 여부 체크
     @PostMapping("/existentID")
-    public Api<String> existentID(String userId) {
-        return Api.OK(userBusiness.existentUserWithThrow(userId));
+    public Api<String> existentID(
+            @RequestParam String userId
+    ) {
+        var response = userBusiness.existentUserWithThrow(userId);
+
+        return Api.OK(response);
     }
 
 
@@ -55,7 +58,9 @@ public class UserOpenApiController {
             @RequestBody
             LoginRequest loginRequest
     ) {
-        return Api.OK(userBusiness.accountActivation(loginRequest));
+        var response = userBusiness.accountActivation(loginRequest);
+
+        return Api.OK(response);
     }
 
 }
