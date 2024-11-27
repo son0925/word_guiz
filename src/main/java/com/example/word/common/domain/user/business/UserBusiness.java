@@ -149,4 +149,8 @@ public class UserBusiness {
         tokenBusiness.cookieSettingToken(user.getUserId(), response, 0, 0);
 
     }
+
+    public UserEntity findByIdWithThrow(User user) {
+        return userService.findByIdWithThrow(user.getUserId());
+    }
 }

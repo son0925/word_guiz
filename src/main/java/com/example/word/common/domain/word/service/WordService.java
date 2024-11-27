@@ -94,4 +94,8 @@ public class WordService {
     }
 
 
+    public WordEntity findByIdWithThrow(Long wordId) {
+        return wordRepository.findByWordId(wordId)
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
+    }
 }

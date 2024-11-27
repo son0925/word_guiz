@@ -153,4 +153,9 @@ public class WordBusiness {
     }
 
 
+    public String findById(Long wordId) {
+        var entity = wordService.findByIdWithThrow(wordId);
+
+        return entity.getWord();
+    }
 }

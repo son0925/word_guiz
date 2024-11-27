@@ -2,18 +2,13 @@ package com.example.word.common.domain.statistics.business;
 
 import com.example.word.common.annotation.Business;
 import com.example.word.common.domain.python.PythonService;
-import com.example.word.common.domain.statistics.model.StatisticsEntity;
-import com.example.word.common.domain.statistics.model.StatisticsId;
-import com.example.word.common.domain.statistics.model.StatisticsResponse;
-import com.example.word.common.domain.statistics.model.StatisticsUpdateRequest;
+import com.example.word.common.domain.statistics.model.*;
 import com.example.word.common.domain.statistics.service.StatisticsConverter;
 import com.example.word.common.domain.statistics.service.StatisticsService;
 import com.example.word.common.domain.user.business.UserBusiness;
 import com.example.word.common.domain.user.model.User;
 import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.word.model.WordEntity;
-import com.example.word.common.error.ErrorCode;
-import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -60,7 +55,7 @@ public class StatisticsBusiness {
 
 
     public List<StatisticsResponse> getWordQuizList(User user, int size) {
-        var userId = user.getUserId();
+        var userId = userBusiness.findByIdWithThrow(user).getUserId();
 
         return statisticsService.getWordQuizList(userId, size).stream()
                 .map(statisticsConverter::toResponse)
@@ -68,30 +63,35 @@ public class StatisticsBusiness {
     }
 
     public void resultUpdate(User user, List<StatisticsUpdateRequest> req) {
-        var userId = user.getUserId();
+        var userId = userBusiness.findByIdWithThrow(user).getUserId();
 
         statisticsService.resultUpdate(userId, req);
     }
 
-    public StatisticsEntity getStatistics(WordEntity wordEntity, UserEntity userEntity) {
+    public StatisticsEntity getStatisticsWithThrow(WordEntity wordEntity, UserEntity userEntity) {
 
-        var optionalStatisticsEntity = statisticsService.getStatisticsEntity(wordEntity, userEntity);
-
-        if (optionalStatisticsEntity.isEmpty()) {
-            throw new ApiException(ErrorCode.NULL_POINT);
-        }
-        return optionalStatisticsEntity.get();
+        return statisticsService.getStatisticsEntityWithThrow(wordEntity, userEntity);
     }
 
 
     public String getStatisticsList(User user) throws IOException {
 
-        var userEntity = userBusiness.findByUserWithThrow(user);
+        var userId = user.getUserId();
 
-        var statisticsList = statisticsService.getStatisticsList(userEntity.getUserId());
+        var statisticsList = statisticsService.getStatisticsList(userId);
 
         var output = pythonService.getGraph(statisticsList);
 
         return output;
+    }
+
+    public List<PivotResponse> getPivot(User user) {
+
+        var userId = userBusiness.findByUserWithThrow(user).getUserId();
+
+        return statisticsService.getStatisticsList(userId).stream()
+                .map(statisticsConverter::toPivot)
+                .toList()
+                ;
     }
 }

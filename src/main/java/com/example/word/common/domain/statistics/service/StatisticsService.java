@@ -34,9 +34,6 @@ public class StatisticsService {
                 .wordId(word.getWordId())
                 .build();
 
-
-        // 이미 저장된 단어라면 Error 처리
-        // TODO 하지만 메모 혹은 뜻을 고칠 땐 예외로 처리하기
         if (statisticsRepository.existsById(id)) {
             throw new ApiException(StatisticsErrorCode.SAVE_FAILED);
         }
@@ -153,7 +150,9 @@ public class StatisticsService {
     }
 
 
+    // 통계 결과 업데이트
     public void resultUpdate(String userId, List<StatisticsUpdateRequest> statisticsList) {
+        // 퀴즈 했던 단어 상태 변경하기
         for (StatisticsUpdateRequest result : statisticsList) {
             updateStatus(StatisticsId.builder()
                     .userId(userId)
@@ -162,21 +161,27 @@ public class StatisticsService {
                     , result.getStatus());
         }
 
+        // 퀴즈 했던 단어 id 가지고 오기
         var wordIdList = statisticsList.stream()
                 .map(StatisticsUpdateRequest::getWordId)
                 .toList();
 
+        // 퀴즈를 하지 않은 단어 가지고 오기
         var noAnswerEntities = statisticsRepository.findAllByIdUserIdAndIdWordIdNotIn(userId, wordIdList);
 
+        // 퀴즈를 하지 않은 단어 업데이트하기
         noAnswerEntities.forEach(it -> {
             it.setNoQuizCount(it.getNoQuizCount() + 1);
         });
 
+        // 잔디 업데이트 하기
         streaksBusiness.plantingGrass(userId);
 
+        // 저장하기
         statisticsRepository.saveAll(noAnswerEntities);
     }
 
+    // 상태 변경하기
     public void updateStatus(StatisticsId id, StatisticsStatus status) {
         var entity = statisticsRepository.findById(id)
                 .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
@@ -185,16 +190,19 @@ public class StatisticsService {
         if (StatisticsStatus.ANSWER.equals(status)) {
             entity.setCorrectAnswerCount(entity.getCorrectAnswerCount() + 1);
         }
+
         entity.setTotalQuizCount(entity.getTotalQuizCount() + 1);
         entity.setNoQuizCount(0);
 
         statisticsRepository.save(entity);
     }
 
-    public Optional<StatisticsEntity> getStatisticsEntity(WordEntity wordEntity, UserEntity userEntity) {
-        return statisticsRepository.findByWordAndUser(wordEntity, userEntity);
+    public StatisticsEntity getStatisticsEntityWithThrow(WordEntity wordEntity, UserEntity userEntity) {
+        return statisticsRepository.findByWordAndUser(wordEntity, userEntity)
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
     }
 
+    // 통계 정보 변경하기
     public void updateStatistics(WordEntity wordEntity, UserEntity userEntity) {
         var optionalStatisticsEntity = statisticsRepository.findByWordAndUser(wordEntity, userEntity);
 
