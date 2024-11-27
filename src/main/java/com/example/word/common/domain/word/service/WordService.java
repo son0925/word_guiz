@@ -6,6 +6,7 @@ import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.word.db.WordRepository;
 import com.example.word.common.domain.word.model.WordEntity;
 import com.example.word.common.domain.word.model.WordUpdateRequest;
+import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.WordErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +53,8 @@ public class WordService {
 
         var userEntity = userBusiness.findByUserWithThrow(user);
 
-        var exists = wordRepository.existsByWordAndUser(word.getWord(), userEntity);
-
-        if (exists) {
+        // 변경할려는 단어가 이미 DB 에 존재하고 원래 기존의 단어와 같지 않을 때(뜻, 메모만 수정하는 경우도 있기 때문)
+        if (wordRepository.existsByWordAndUser(word.getWord(), userEntity) && !wordEntity.getWord().equals(word.getWord())) {
             throw new ApiException(WordErrorCode.EXISTS_WORD);
         }
 
@@ -88,8 +88,9 @@ public class WordService {
         return wordRepository.findByWordIdIn(wordIdList);
     }
 
-    public Optional<WordEntity> getWordByWordId(Long wordId) {
-        return wordRepository.findByWordId(wordId);
+    public WordEntity getWordByWordIdWithThrow(Long wordId) {
+        return wordRepository.findByWordId(wordId)
+                .orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST));
     }
 
 

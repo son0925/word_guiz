@@ -67,26 +67,15 @@ public class WordBusiness {
 
     @Transactional
     public WordResponse updateWord(Api<WordUpdateRequest> wordRequest, User user) {
-        var wordData = wordRequest.getBody();
+        var updateWordData = wordRequest.getBody();
 
-        if (Objects.isNull(wordData) || wordData.getWord() == null || wordData.getMean() == null || Objects.isNull(user)) {
+        if (Objects.isNull(updateWordData) || updateWordData.getWord() == null || updateWordData.getMean() == null || Objects.isNull(user)) {
             throw new ApiException(ErrorCode.NULL_POINT);
         }
 
-        var optionalWordEntity = wordService.getWordByWordId(wordData.getWordId());
+        var wordEntity = wordService.getWordByWordIdWithThrow(updateWordData.getWordId());
 
-        if (optionalWordEntity.isEmpty()) {
-            throw new ApiException(ErrorCode.NULL_POINT);
-        }
-
-        var optionalWord = wordService.getWordByWordId(wordData.getWordId());
-
-
-        if (optionalWord.isEmpty()) {
-            throw new ApiException(ErrorCode.NULL_POINT);
-        }
-
-        var updateWordEntity = wordService.updateWord(optionalWord.get(), wordData, user);
+        var updateWordEntity = wordService.updateWord(wordEntity, updateWordData, user);
 
         statisticsBusiness.updateStatistics(updateWordEntity);
 

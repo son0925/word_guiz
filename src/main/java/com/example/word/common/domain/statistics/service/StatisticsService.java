@@ -120,7 +120,7 @@ public class StatisticsService {
 
         int count = Math.max(statisticsList.size() / 10, 5);
 
-        // 20번 연속으로 퀴즈를 하지 않은 단어
+        // 5번 이상 퀴즈를 하지 않은 단어
         statisticsList.stream()
                 .filter(it -> it.getNoQuizCount() >= count)
                 .filter(it -> !wordQuizList.contains(it))  // 이미 포함된 단어는 제외

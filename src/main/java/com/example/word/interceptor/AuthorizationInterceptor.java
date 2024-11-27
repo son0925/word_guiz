@@ -67,7 +67,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         }
 
         // 둘 다 유효하지 않은 경우
-        throw new ApiException(ErrorCode.BAD_REQUEST, "다시 로그인을 해주세요");
+        throw new ApiException(TokenErrorCode.INVALID_TOKEN, "다시 로그인을 해주세요");
     }
 
     @Override
