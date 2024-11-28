@@ -1,6 +1,7 @@
 package com.example.word.common.domain.statistics.service;
 
 import com.example.word.common.domain.statistics.db.StatisticsRepository;
+import com.example.word.common.domain.statistics.model.PivotResponse;
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.example.word.common.domain.statistics.model.StatisticsId;
 import com.example.word.common.domain.statistics.model.StatisticsUpdateRequest;
@@ -12,9 +13,13 @@ import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.StatisticsErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -218,5 +223,9 @@ public class StatisticsService {
         statisticsEntity.setTotalQuizCount(0);
 
         statisticsRepository.save(statisticsEntity);
+    }
+
+    public List<PivotResponse> getPivotList(String userId) {
+        return statisticsRepository.findStatisticsByUserId(userId);
     }
 }

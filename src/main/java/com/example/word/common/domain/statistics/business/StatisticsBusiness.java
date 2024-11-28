@@ -89,9 +89,6 @@ public class StatisticsBusiness {
 
         var userId = userBusiness.findByUserWithThrow(user).getUserId();
 
-        return statisticsService.getStatisticsList(userId).stream()
-                .map(statisticsConverter::toPivot)
-                .toList()
-                ;
+        return statisticsService.getPivotList(userId);
     }
 }

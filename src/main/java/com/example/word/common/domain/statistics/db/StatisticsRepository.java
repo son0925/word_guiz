@@ -1,10 +1,14 @@
 package com.example.word.common.domain.statistics.db;
 
+import com.example.word.common.domain.statistics.model.PivotResponse;
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.example.word.common.domain.statistics.model.StatisticsId;
+import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.word.model.WordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +33,10 @@ public interface StatisticsRepository extends JpaRepository<StatisticsEntity, St
     List<StatisticsEntity> findAllByIdUserIdAndIdWordIdNotIn(String userId, List<Long> wordIds);
 
     Optional<StatisticsEntity> findByWordAndUser(WordEntity wordEntity, UserEntity userEntity);
+
+    @Query("SELECT new com.example.word.common.domain.statistics.model.PivotResponse(w.word, s.correctAnswerCount, s.totalQuizCount) " +
+            "FROM StatisticsEntity s " +
+            "JOIN s.word w " +
+            "WHERE s.user.id = :userId")
+    List<PivotResponse> findStatisticsByUserId(@Param("userId") String userId);
 }
