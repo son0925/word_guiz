@@ -49,13 +49,4 @@ public class StatisticsApiController {
         return Api.OK(response);
     }
 
-    @GetMapping("/getStatistics")
-    public Api<String> getGraph(
-            @UserSession User user
-    ) throws IOException {
-        var response = statisticsBusiness.getStatisticsList(user);
-
-        return Api.OK(response);
-    }
-
 }

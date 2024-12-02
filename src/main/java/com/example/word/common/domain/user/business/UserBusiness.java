@@ -43,7 +43,7 @@ public class UserBusiness {
         var userEntity = userService.login(userId, password);
 
 
-        tokenBusiness.cookieSettingToken(userId, response, 15, 60);
+        tokenBusiness.cookieSettingToken(userId, response, 60, 60 * 24);
 
         return userConverter.toResponse(userEntity);
     }

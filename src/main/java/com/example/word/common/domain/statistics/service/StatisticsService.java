@@ -13,15 +13,10 @@ import com.example.word.common.error.ErrorCode;
 import com.example.word.common.error.StatisticsErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,20 +62,6 @@ public class StatisticsService {
     }
 
 
-    public StatisticsEntity update(WordEntity word, UserEntity user) {
-        var entity = statisticsRepository.findByWordAndUser(word, user)
-                .orElseThrow(() -> new ApiException(ErrorCode.NULL_POINT));
-
-        // 통계 업데이트
-        entity.setNoQuizCount(0);
-        entity.setTotalQuizCount(0L);
-        entity.setCorrectAnswerCount(0);
-        entity.setStatus(StatisticsStatus.NO_ANSWER);
-
-        return statisticsRepository.save(entity);
-    }
-
-
     public void deleteWord(StatisticsId id) {
         statisticsRepository.deleteById(id);
     }
@@ -90,8 +71,9 @@ public class StatisticsService {
     /**
      * 1. 퀴즈를 한 번도 하지 않은 단어
      * 2. 마지막 퀴즈에서 틀린 단어
-     * 3. 20번 이상 연속으로 퀴즈를 하지 않은 단어
-     * 4. 정답률이 저조한 단어
+     * 3. 퀴즈를 5번 이하로 한 단어(아직 익숙하지 않기 때문에 추가)
+     * 4. Math.max(statisticsList.size() / 10, 5) 번 문제를 풀지 않은 단어
+     * 5. 정답률이 저조한 단어
      */
     public List<StatisticsEntity> getWordQuizList(String userId, int size) {
         var statisticsList = statisticsRepository.findAllByIdUserId(userId);
@@ -104,7 +86,6 @@ public class StatisticsService {
 
         // size 채웠다면 바로 return 하기
         if (wordQuizList.size() >= size) {
-            System.out.println(size + " " + wordQuizList.size() + " 1");
             return wordQuizList.subList(0, size);
         }
 
@@ -116,7 +97,16 @@ public class StatisticsService {
 
         // size 채웠다면 바로 return 하기
         if (wordQuizList.size() >= size) {
-            System.out.println(wordQuizList.size() + " 2");
+            return wordQuizList.subList(0, size);
+        }
+
+        // 퀴즈를 5번 이하로 했는 단어
+        statisticsList.stream()
+                .filter(it -> it.getTotalQuizCount() <= 5)
+                .filter(it -> !wordQuizList.contains(it))
+                .forEach(wordQuizList::add);
+
+        if (wordQuizList.size() >= size) {
             return wordQuizList.subList(0, size);
         }
 
@@ -130,7 +120,6 @@ public class StatisticsService {
 
         // size 채웠다면 바로 return 하기
         if (wordQuizList.size() >= size) {
-            System.out.println(wordQuizList.size() + " 3");
             return wordQuizList.subList(0, size);
         }
 

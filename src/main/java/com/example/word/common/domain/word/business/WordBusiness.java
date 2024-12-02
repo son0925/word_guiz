@@ -112,13 +112,7 @@ public class WordBusiness {
 
 
     @Transactional
-    public void deleteWord(Api<WordDeleteRequest> wordIdApi, User user) {
-
-        if (Objects.isNull(user) || Objects.isNull(wordIdApi)) {
-            throw new ApiException(UserErrorCode.DO_NOT_LOGIN);
-        }
-
-        var wordId = wordIdApi.getBody().getWordId();
+    public void deleteWord(Long wordId, User user) {
         var userId = user.getUserId();
 
         wordService.deleteWord(wordId, userId);

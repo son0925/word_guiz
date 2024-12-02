@@ -1,7 +1,6 @@
 package com.example.word.common.domain.statistics.business;
 
 import com.example.word.common.annotation.Business;
-import com.example.word.common.domain.python.PythonService;
 import com.example.word.common.domain.statistics.model.*;
 import com.example.word.common.domain.statistics.service.StatisticsConverter;
 import com.example.word.common.domain.statistics.service.StatisticsService;
@@ -23,8 +22,6 @@ public class StatisticsBusiness {
     private final StatisticsConverter statisticsConverter;
 
     private final UserBusiness userBusiness;
-
-    private final PythonService pythonService;
 
 
     public void create(WordEntity word, UserEntity user) {
@@ -71,18 +68,6 @@ public class StatisticsBusiness {
     public StatisticsEntity getStatisticsWithThrow(WordEntity wordEntity, UserEntity userEntity) {
 
         return statisticsService.getStatisticsEntityWithThrow(wordEntity, userEntity);
-    }
-
-
-    public String getStatisticsList(User user) throws IOException {
-
-        var userId = user.getUserId();
-
-        var statisticsList = statisticsService.getStatisticsList(userId);
-
-        var output = pythonService.getGraph(statisticsList);
-
-        return output;
     }
 
     public List<PivotResponse> getPivot(User user) {

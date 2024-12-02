@@ -54,14 +54,12 @@ public class WordController {
     }
 
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{wordId}")
     public Api<String> deleteWord(
-            @Valid
-            @RequestBody Api<WordDeleteRequest> word,
+            @PathVariable Long wordId,
             @UserSession User user
     ) {
-        System.out.println(user);
-        wordBusiness.deleteWord(word, user);
+        wordBusiness.deleteWord(wordId, user);
 
         return Api.OK("단어가 삭제되었습니다.");
     }

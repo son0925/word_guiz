@@ -3,7 +3,6 @@ package com.example.word.common.domain.statistics.db;
 import com.example.word.common.domain.statistics.model.PivotResponse;
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
 import com.example.word.common.domain.statistics.model.StatisticsId;
-import com.example.word.common.domain.statistics.model.StatisticsResponse;
 import com.example.word.common.domain.user.model.UserEntity;
 import com.example.word.common.domain.word.model.WordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
