@@ -16,6 +16,7 @@ public enum UserErrorCode implements ErrorCodeIfs{
     LOGIN_FAILED(401, 1403, "아이디 혹은 비밀번호가 틀립니다"),
     EXISTENT_USER(403, 1404, "이미 존재하는 회원"),
     UNREGISTER_USER(403, 1405, "탈퇴한 회원"),
+    UN_AUTHORIZATION(403, 1403, "해당 권한이 없음"),
 
 
     ;

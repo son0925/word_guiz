@@ -51,6 +51,7 @@ public class UserSessionResolver implements HandlerMethodArgumentResolver {
                 .userId(userEntity.getUserId())
                 .password(userEntity.getPassword())
                 .name(userEntity.getName())
+                .role(userEntity.getRole())
                 .build()
                 ;
     }

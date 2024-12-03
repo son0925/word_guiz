@@ -13,7 +13,6 @@ public class UserConverter {
     public UserEntity toEntity(UserResponse response) {
         return UserEntity.builder()
                 .userId(response.getUserId())
-                .password(response.getPassword())
                 .name(response.getName())
                 .status(response.getStatus())
                 .birthdate(response.getBirthdate())
@@ -26,9 +25,9 @@ public class UserConverter {
     public UserResponse toResponse(UserEntity userEntity) {
         return UserResponse.builder()
                 .userId(userEntity.getUserId())
-                .password(userEntity.getPassword())
                 .name(userEntity.getName())
                 .status(userEntity.getStatus())
+                .role(userEntity.getRole())
                 .birthdate(userEntity.getBirthdate())
                 .lastLoginTime(userEntity.getLastLoginTime())
                 .profileUrl(userEntity.getProfileUrl())

@@ -1,5 +1,6 @@
 package com.example.word.common.domain.user.model;
 
+import com.example.word.common.domain.user.model.enums.UserRole;
 import com.example.word.common.domain.user.model.enums.UserStatus;
 import lombok.*;
 
@@ -14,11 +15,11 @@ public class UserResponse {
 
     private String userId;
 
-    private String password;
-
     private String name;
 
     private UserStatus status;
+
+    private UserRole role;
 
     private LocalDateTime birthdate;
 

@@ -1,6 +1,7 @@
 package com.example.word.common.domain.user.model;
 
 import com.example.word.common.domain.statistics.model.StatisticsEntity;
+import com.example.word.common.domain.user.model.enums.UserRole;
 import com.example.word.common.domain.user.model.enums.UserStatus;
 import com.example.word.common.domain.word.model.WordEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,6 +28,9 @@ public class UserEntity {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     private LocalDateTime birthdate;
 

@@ -1,42 +1,39 @@
 package com.example.word.common.domain.board.model;
 
 import com.example.word.common.domain.board.model.enums.BoardStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import com.example.word.common.domain.comment.model.CommentResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Entity
-@Table(name = "board")
-public class BoardEntity {
+public class BoardResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer boardId;
 
     private String userId;
 
-    @Setter
     private String title;
 
-    @Setter
     private String content;
 
     private LocalDateTime createAt;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
     private BoardStatus status;
 
-    @Setter
     private String password;
 
     private int boardLike;
 
     private int visitCount;
+
+    private List<CommentResponse> commentList;
 
 }
