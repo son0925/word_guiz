@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CommentStatus {
+public enum ReplyStatus {
 
     REGISTER("등록"),
     UNREGISTER("삭제"),

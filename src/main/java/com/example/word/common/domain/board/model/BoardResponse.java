@@ -1,7 +1,7 @@
 package com.example.word.common.domain.board.model;
 
 import com.example.word.common.domain.board.model.enums.BoardStatus;
-import com.example.word.common.domain.comment.model.CommentResponse;
+import com.example.word.common.domain.comment.model.ReplyResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +34,6 @@ public class BoardResponse {
 
     private int visitCount;
 
-    private List<CommentResponse> commentList;
+    private List<ReplyResponse> repliesList;
 
 }

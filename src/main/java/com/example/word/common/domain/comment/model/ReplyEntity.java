@@ -1,6 +1,6 @@
 package com.example.word.common.domain.comment.model;
 
-import com.example.word.common.domain.comment.model.enums.CommentStatus;
+import com.example.word.common.domain.comment.model.enums.ReplyStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "comment")
-public class CommentEntity {
+@Table(name = "reply")
+public class ReplyEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int commentId;
+    private int replyId;
 
     private int boardId;
 
@@ -30,6 +30,6 @@ public class CommentEntity {
     private LocalDateTime createAt;
 
     @Enumerated(EnumType.STRING)
-    private CommentStatus status;
+    private ReplyStatus status;
 
 }

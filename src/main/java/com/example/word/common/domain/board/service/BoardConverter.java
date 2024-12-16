@@ -3,14 +3,14 @@ package com.example.word.common.domain.board.service;
 import com.example.word.common.annotation.Converter;
 import com.example.word.common.domain.board.model.BoardEntity;
 import com.example.word.common.domain.board.model.BoardResponse;
-import com.example.word.common.domain.comment.business.CommentBusiness;
+import com.example.word.common.domain.comment.business.ReplyBusiness;
 import lombok.RequiredArgsConstructor;
 
 @Converter
 @RequiredArgsConstructor
 public class BoardConverter {
 
-    private final CommentBusiness commentBusiness;
+    private final ReplyBusiness commentBusiness;
 
     public BoardResponse toResponse(BoardEntity entity) {
         return BoardResponse.builder()
@@ -23,7 +23,7 @@ public class BoardConverter {
                 .createAt(entity.getCreateAt())
                 .boardLike(entity.getBoardLike())
                 .visitCount(entity.getVisitCount())
-                .commentList(commentBusiness.getCommentList(entity.getBoardId()))
+                .repliesList(commentBusiness.getCommentList(entity.getBoardId()))
                 .build()
                 ;
     }

@@ -11,14 +11,10 @@ public class BoardUpdateRequest {
 
     private int boardId;
 
-    private String userId;
-
     private String title;
 
     private String content;
 
     private String password;
-
-
 
 }

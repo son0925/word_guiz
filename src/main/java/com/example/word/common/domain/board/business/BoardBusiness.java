@@ -55,22 +55,48 @@ public class BoardBusiness {
 
     // 게시글 리스트
     // TODO API 여기서 호출하면 안될 듯 WORD에서도 똑같이 수정하자
-    public Api<List<BoardResponse>> getBoardList(Pageable pageable) {
-        var boardPage = boardService.getBoardList(pageable);
+    public Api<List<BoardResponse>> getBoardList(Pageable pageable, String writerId, String title) {
+        List<BoardEntity> boardEntities;
 
-        var response = boardPage.getContent().stream()
+        if (title != null && !title.isBlank()) {
+            // 제목으로 검색
+            boardEntities = boardService.searchTitleList(title);
+        } else if (writerId != null && !writerId.isBlank()) {
+            // 작성자로 검색
+            boardEntities = boardService.searchWriter(writerId);
+        } else {
+            // 기본 게시글 리스트
+            var boardPage = boardService.getBoardList(pageable);
+            var response = boardPage.getContent().stream()
+                    .map(boardConverter::toResponse)
+                    .toList();
+
+            var pagination = Pagination.builder()
+                    .curPage(boardPage.getNumber())
+                    .curElement(boardPage.getNumberOfElements())
+                    .size(boardPage.getSize())
+                    .totalPage(boardPage.getTotalPages())
+                    .totalElement(boardPage.getTotalElements())
+                    .build();
+
+            return Api.OK(response, pagination);
+        }
+
+        // 검색된 결과 리스트를 변환하여 반환
+        var response = boardEntities.stream()
                 .map(boardConverter::toResponse)
-                .toList()
-                ;
+                .toList();
 
-        var pagination = Pagination.builder()
-                .curPage(boardPage.getNumber())
-                .curElement(boardPage.getNumberOfElements())
-                .size(boardPage.getSize())
-                .totalPage(boardPage.getTotalPages())
-                .totalElement(boardPage.getTotalElements())
-                .build();
+        return Api.OK(response);
+    }
 
-        return Api.OK(response, pagination);
+    public BoardResponse getBoardDetail(int boardId) {
+        var entity = boardService.getBoardDetail(boardId);
+
+        return boardConverter.toResponse(entity);
+    }
+
+    public void increaseVisitCount(int boardId) {
+        boardService.increaseVisitCount(boardId);
     }
 }

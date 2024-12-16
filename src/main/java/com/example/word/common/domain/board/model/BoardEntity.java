@@ -35,8 +35,10 @@ public class BoardEntity {
     @Setter
     private String password;
 
+    @Setter
     private int boardLike;
 
+    @Setter
     private int visitCount;
 
 }

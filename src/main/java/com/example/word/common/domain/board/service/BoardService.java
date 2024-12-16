@@ -14,7 +14,9 @@ import com.example.word.common.error.UserErrorCode;
 import com.example.word.common.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -59,8 +61,7 @@ public class BoardService {
     public BoardEntity updateBoard(User user, BoardUpdateRequest request) {
         var boardEntity = findByIdWithThrow(request.getBoardId());
 
-        // 관리자 혹은 작성자가 아니라면
-        isRoleAbleWithThrow(user, request.getUserId());
+        // TODO 관리자 혹은 작성자가 아니라면
 
         boardEntity.setTitle(request.getTitle());
         boardEntity.setContent(request.getContent());
@@ -87,16 +88,21 @@ public class BoardService {
 
     // 게시글 리스트 가지고 오기(Pageable, 필터링까지)
     public Page<BoardEntity> getBoardList(Pageable pageable) {
-        return boardRepository.findAll(pageable);
+        var sort = Sort.by(Sort.Direction.DESC, "createAt");
+        var sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return boardRepository.findAllByStatusNot(BoardStatus.UNREGISTER, sortedPageable);
     }
 
     // 게시글 검색하기
-    public List<BoardEntity> searchBoardList() {
-        return null;
+    public List<BoardEntity> searchTitleList(String title) {
+        return boardRepository.findAllByTitleContainingAndStatusNot(title, BoardStatus.UNREGISTER);
     }
 
 
     // 작성자 검색하기
+    public List<BoardEntity> searchWriter(String writerId) {
+        return boardRepository.findAllByUserIdAndStatusNot(writerId, BoardStatus.UNREGISTER);
+    }
 
 
 
@@ -118,4 +124,15 @@ public class BoardService {
     }
 
 
+    public void increaseVisitCount(int boardId) {
+        var entity = findByIdWithThrow(boardId);
+
+        entity.setVisitCount(entity.getVisitCount() + 1);
+
+        boardRepository.save(entity);
+    }
+
+    public BoardEntity getBoardDetail(int boardId) {
+        return findByIdWithThrow(boardId);
+    }
 }

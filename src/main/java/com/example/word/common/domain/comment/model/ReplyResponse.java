@@ -1,6 +1,6 @@
 package com.example.word.common.domain.comment.model;
 
-import com.example.word.common.domain.comment.model.enums.CommentStatus;
+import com.example.word.common.domain.comment.model.enums.ReplyStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommentResponse {
+public class ReplyResponse {
 
-    private int commentId;
+    private int replyId;
 
     private int boardId;
 
@@ -24,5 +24,5 @@ public class CommentResponse {
 
     private LocalDateTime createAt;
 
-    private CommentStatus status;
+    private ReplyStatus status;
 }

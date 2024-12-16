@@ -5,13 +5,10 @@ import com.example.word.common.api.Api;
 import com.example.word.common.domain.board.business.BoardBusiness;
 import com.example.word.common.domain.board.model.BoardCreateRequest;
 import com.example.word.common.domain.board.model.BoardResponse;
+import com.example.word.common.domain.board.model.BoardUpdateRequest;
 import com.example.word.common.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,14 +16,6 @@ import java.util.List;
 public class BoardApiController {
 
     private final BoardBusiness boardBusiness;
-
-    @GetMapping("/list")
-    public Api<List<BoardResponse>> getBoardList(
-            @PageableDefault(page = 0, size = 10)
-            Pageable pageable
-    ) {
-        return boardBusiness.getBoardList(pageable);
-    }
 
     @PostMapping("/create")
     public Api<BoardResponse> createBoard(
@@ -37,6 +26,36 @@ public class BoardApiController {
         var response = boardBusiness.createBoard(user, request);
 
         return Api.OK(response);
+    }
+
+    @PostMapping("/update")
+    public Api<BoardResponse> updateBoard(
+        @UserSession
+        User user,
+        @RequestBody BoardUpdateRequest request
+    ) {
+        var response = boardBusiness.updateBoard(user, request);
+
+        return Api.OK(response);
+    }
+
+    @DeleteMapping("/delete/{boardId}")
+    public Api<BoardResponse> delete(
+            @UserSession
+            User user,
+            @PathVariable int boardId
+    ) {
+        var response = boardBusiness.deleteBoard(user, boardId);
+
+        return Api.OK(response);
+    }
+
+    @GetMapping("/visit/{boardId}")
+    public void increaseVisitCount(
+            @PathVariable
+            int boardId
+    ) {
+        boardBusiness.increaseVisitCount(boardId);
     }
 
 }
